@@ -187,6 +187,16 @@ function getRatio(
   return [ ratioA, ratioB ];
 }
 
+export function downDividerSelector(state) {
+  const { dividerDown } = state;
+  if (!dividerDown) {
+    return null;
+  }
+  return {
+    ...state.dividers[dividerDown.id],
+    ...dividerDown
+  };
+}
 
 const firstPass = handleActions({
   // creates a new pane group, puts the existing and the newly created pane
@@ -269,8 +279,8 @@ const firstPass = handleActions({
     panesById[currentParent.id] = currentParent;
     panesById[newPane.id] = newPane;
     panesById[currentPane.id] = currentPane;
-    const divider = {
-      ...state.dividers[newDividerId],
+    const dividerDown = {
+      id: newDividerId,
       startX,
       startY
     };
@@ -279,8 +289,8 @@ const firstPass = handleActions({
       panes,
       rootId,
       panesById,
-      cornerDown: null,
-      dividerDown: divider
+      dividerDown,
+      cornerDown: null
     };
   },
 

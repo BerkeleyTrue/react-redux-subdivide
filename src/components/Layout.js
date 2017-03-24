@@ -13,6 +13,7 @@ import {
   SE,
   NW
 } from '../constants'
+import { downDividerSelector } from '../reducers';
 
 export default class Layout extends Component {
   static defaultProps = {
@@ -28,7 +29,7 @@ export default class Layout extends Component {
       const { actions, subdivide } = this.props
 
       if (subdivide.dividerDown) {
-        const divider = subdivide.dividerDown
+        const divider = subdivide.dividerDown;
         const {
           beforePaneId,
           afterPaneId,
@@ -36,7 +37,7 @@ export default class Layout extends Component {
           parentSize,
           startX,
           startY
-        } = divider
+        } = downDividerSelector(subdivide);
 
         let delta = direction === ROW ?
           clientX - startX :
