@@ -28,6 +28,14 @@ export const splitTypes = createTypes([
   'none'
 ], 'split');
 
+
+export const joinTypes = createTypes([
+  'right',
+  'up',
+  'left',
+  'down'
+], 'join');
+
 export const types = createTypes([
   'JOIN',
   'SPLIT',
@@ -44,12 +52,7 @@ export const types = createTypes([
   'SET_DIVIDER_DOWN',
   'SET_CORNER_DOWN',
   'SET_PANE_PROPS',
-  'SET_CORNER_HOVER',
-
-  'JOIN_RIGHT_ARROW',
-  'JOIN_UP_ARROW',
-  'JOIN_LEFT_ARROW',
-  'JOIN_DOWN_ARROW'
+  'SET_CORNER_HOVER'
 ], ns);
 
 export const createPane = (values = {}) => ({
