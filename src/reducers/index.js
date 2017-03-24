@@ -443,9 +443,9 @@ const firstPass = handleActions({
       }
     };
   }
-});
+}, createLayout());
 
-export default function reducer(state = createLayout(), action) {
+export default function reducer(state, action) {
   const newState = firstPass(state, action);
   if (newState === state) {
     return state;
