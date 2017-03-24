@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import {
-  COL
-} from '../constants';
+import { directions } from '../reducers';
 
 export default class Divider extends Component {
   constructor(props, context) {
@@ -13,14 +11,14 @@ export default class Divider extends Component {
 
     this.onMouseUp = () => {
       const { actions } = this.props;
-      actions.setDividerDown(undefined);
+      actions.setDividerDown();
       this.removeListeners();
     };
 
     this.onMouseDown = ({ clientX, clientY }) => {
       const { actions, divider } = this.props;
 
-      actions.setDividerDown({ ...divider.toJS(), startX: clientX, startY: clientY });
+      actions.setDividerDown({ ...divider, startX: clientX, startY: clientY });
 
       document.addEventListener('mouseup', this.onMouseUp);
     };
@@ -42,7 +40,7 @@ export default class Divider extends Component {
       position: 'absolute'
     };
 
-    if (direction === COL) {
+    if (direction === directions.col) {
       touch.cursor = 'row-resize';
       touch.top -= touchMargin;
       touch.height += touchMargin * 2;
@@ -61,12 +59,12 @@ export default class Divider extends Component {
 
     return (
       <div
-        style={styles.touch}
-        onMouseDown={this.onMouseDown}
         className='divider'
+        onMouseDown={ this.onMouseDown }
+        style={ styles.touch }
         >
-        <div style={styles.border}>
-           <div style={styles.inner} />
+        <div style={ styles.border }>
+           <div style={ styles.inner } />
         </div>
       </div>
     );

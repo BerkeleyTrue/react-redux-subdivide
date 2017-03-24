@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 
-import {
-  SW,
-  NE,
-  SE,
-  NW
-} from '../constants';
+import { cardinals } from '../reducers';
 
 export default class Triangle extends Component {
+  constructor(...props) {
+    super(...props);
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseEnter = this.onMouseEnter.bind(this);
+    this.onMouseLeave = this.onMouseLeave.bind(this);
+  }
 
   onMouseDown() {
     const { actions, corner, pane } = this.props;
-    actions.setCornerDown({ ...pane.toJS(), corner });
+    actions.setCornerDown({ ...pane, corner });
   }
 
   onMouseEnter() {
@@ -24,7 +25,7 @@ export default class Triangle extends Component {
 
   onMouseLeave() {
     const { actions } = this.props;
-    actions.setCornerHover(undefined);
+    actions.setCornerHover();
   }
 
   getStyles() {
@@ -40,37 +41,37 @@ export default class Triangle extends Component {
       display: subdivide.dividerDown ? 'none' : 'block'
     };
 
-    if (corner === NE) {
+    if (corner === cardinals.ne) {
       outer = {
         ...outer,
         top: 0,
         right: 0,
         cursor: 'grab',
-        transform: 'translate3d(' + (offset) + 'px,' + (-offset) + 'px, 0) rotate(225deg)'
+        transform: `translate3d(${offset}px, ${-offset}px, 0) rotate(225deg)`
       };
-    } else if ( corner === SW) {
+    } else if ( corner === cardinals.sw) {
       outer = {
         ...outer,
         bottom: 0,
         left: 0,
         cursor: 'grab',
-        transform: 'translate3d(' + (-offset) + 'px,' + (offset) + 'px, 0) rotate(45deg)'
+        transform: `translate3d(${-offset}px, ${offset}px, 0) rotate(45deg)`
       };
-    } else if ( corner === SE) {
+    } else if ( corner === cardinals.se) {
       outer = {
         ...outer,
         bottom: 0,
         right: 0,
         cursor: 'grab',
-        transform: 'translate3d(' + (offset) + 'px,' + (offset) + 'px, 0) rotate(315deg)'
+        transform: `translate3d(${offset}px, ${offset}px, 0) rotate(315deg)`
       };
-    } else if ( corner === NW) {
+    } else if ( corner === cardinals.nw) {
       outer = {
         ...outer,
         top: 0,
         left: 0,
         cursor: 'grab',
-        transform: 'translate3d(' + (-offset) + 'px,' + (-offset) + 'px, 0) rotate(135deg)'
+        transform: `translate3d(${-offset}px, ${-offset}px, 0) rotate(135deg)`
       };
     }
 
@@ -97,15 +98,15 @@ export default class Triangle extends Component {
   render() {
     let styles = this.getStyles();
     return (
-        <div
-          key='outer'
-          style={styles.outer}
-          onMouseDown={() => this.onMouseDown()}
-          onMouseEnter={() => this.onMouseEnter()}
-          onMouseLeave={() => this.onMouseLeave()}
-          >
-          <div style={styles.inner} />
-        </div>
+      <div
+        key='outer'
+        onMouseDown={ this.onMouseDown }
+        onMouseEnter={ this.onMouseEnter }
+        onMouseLeave={ this.onMouseLeave }
+        style={ styles.outer }
+        >
+        <div style={ styles.inner } />
+      </div>
     );
   }
 }

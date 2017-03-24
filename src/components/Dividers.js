@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  COL
-} from '../constants';
+import { directions } from '../reducers';
 import DividerTouch from './DividerTouch';
 
 let Rect = (props) => {
@@ -32,13 +30,18 @@ let Dividers = (props) => {
       backgroundColor: '#c0c0d0'
     };
 
-    return <Rect style={style} key={id} />;
+    return (
+      <Rect
+        key={id}
+        style={style}
+      />
+    );
   };
 
   let toInner = (divider) => {
     const { width, height, top, left, id, direction } = divider;
     let style;
-    if (direction === COL) {
+    if (direction === directions.col) {
       style = {
         width: width + borderSize * 2,
         height: height - borderSize * 2,
@@ -67,16 +70,23 @@ let Dividers = (props) => {
     }
     style.height = Math.min(style.height, subdivide.height - style.top);
 
-    return <Rect style={style} key={id} />;
+    return (
+      <Rect
+        key={ id }
+        style={ style }
+      />
+    );
   };
 
   let toTouch = (divider) => {
-    return (<DividerTouch
-              divider={divider}
-              subdivide={subdivide}
-              actions={actions}
-              key={divider.id}
-    />);
+    return (
+      <DividerTouch
+        actions={ actions }
+        divider={ divider }
+        key={ divider.id }
+        subdivide={ subdivide }
+      />
+    );
   };
 
   return (

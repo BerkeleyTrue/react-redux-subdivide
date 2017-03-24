@@ -3,17 +3,11 @@ import Pane from './Pane';
 import Dividers from './Dividers';
 import AnimationFrame from '../helpers/AnimationFrame';
 import {
-  CHILD_ABOVE,
-  CHILD_BELOW,
-  CHILD_LEFT,
-  CHILD_RIGHT,
-  ROW,
-  SW,
-  NE,
-  SE,
-  NW
-} from '../constants';
-import { downDividerSelector } from '../reducers';
+  cardinals,
+  directions,
+  downDividerSelector,
+  splitTypes
+} from '../reducers';
 
 export default class Layout extends Component {
   static defaultProps = {
@@ -39,7 +33,7 @@ export default class Layout extends Component {
           startY
         } = downDividerSelector(subdivide);
 
-        let delta = direction === ROW ?
+        let delta = direction === directions.row ?
           clientX - startX :
           clientY - startY;
         let deltaRatio = delta / parentSize;
@@ -59,35 +53,35 @@ export default class Layout extends Component {
         if (clientX > left && clientX < left + width &&
           clientY > top && clientY < top + height) {
 
-          if (corner === SW) {
+          if (corner === cardinals.sw) {
             if (clientX - left > 25) {
-              split(id, CHILD_LEFT, clientX, clientY);
+              split(id, splitTypes.left, clientX, clientY);
             } else if (top + height - clientY > 25) {
-              split(id, CHILD_BELOW, clientX, clientY);
+              split(id, splitTypes.below, clientX, clientY);
             }
           }
 
-          if (corner === NE) {
+          if (corner === cardinals.ne) {
             if (left + width - clientX > 25) {
-              split(id, CHILD_RIGHT, clientX, clientY);
+              split(id, splitTypes.right, clientX, clientY);
             } else if (clientY - top > 25) {
-              split(id, CHILD_ABOVE, clientX, clientY);
+              split(id, splitTypes.above, clientX, clientY);
             }
           }
 
-          if (corner === SE) {
+          if (corner === cardinals.se) {
             if (left + width - clientX > 25) {
-              split(id, CHILD_RIGHT, clientX, clientY);
+              split(id, splitTypes.right, clientX, clientY);
             } else if (top + height - clientY > 25) {
-              split(id, CHILD_BELOW, clientX, clientY);
+              split(id, splitTypes.below, clientX, clientY);
             }
           }
 
-          if (corner === NW) {
+          if (corner === cardinals.nw) {
             if (clientX - left > 25) {
-              split(id, CHILD_LEFT, clientX, clientY);
+              split(id, splitTypes.left, clientX, clientY);
             } else if (clientY - top > 25) {
-              split(id, CHILD_ABOVE, clientX, clientY);
+              split(id, splitTypes.above, clientX, clientY);
             }
           }
         }
@@ -98,12 +92,12 @@ export default class Layout extends Component {
     this.onMouseUp = () => {
       const { actions, subdivide } = this.props;
       if (subdivide.dividerDown) {
-        actions.setDividerDown(undefined);
+        actions.setDividerDown();
       }
       // give pane onMouseUp a chance to fire
       setTimeout(()=>{
         if (subdivide.cornerDown) {
-          actions.setCornerDown(undefined);
+          actions.setCornerDown();
         }
       }, 10);
     };
@@ -124,38 +118,30 @@ export default class Layout extends Component {
   }
 
   render() {
-    const { subdivide, actions, DefaultComponent, iframeSafe } = this.props;
-    let panes;
-    if (iframeSafe) {
-      panes = subdivide.allPanesIdsEver.toList().toJS().map(id => {
-        const pane = subdivide.panes.get(id);
+    const { subdivide, actions, DefaultComponent } = this.props;
+    const panes = Object.keys(subdivide.panesById)
+      .map(key => subdivide.panesById[key])
+      .filter(pane => !pane.isGroup)
+      .map(pane => {
         return (
           <Pane
-            subdivide={subdivide}
-            pane={pane}
-            actions={actions}
-            key={id}
-            DefaultComponent={DefaultComponent}
+            actions={ actions }
+            DefaultComponent={ DefaultComponent }
+            key={ pane.id }
+            pane={ pane }
+            subdivide={ subdivide }
           />
         );
       });
-    } else {
-      panes = subdivide.panes.toList().filter(pane => !pane.isGroup)
-        .map(pane => {
-          return (<Pane
-            subdivide={subdivide}
-            pane={pane}
-            actions={actions}
-            key={pane.id}
-            DefaultComponent={DefaultComponent}
-          />);
-        });
-    }
 
     return (
       <div>
-        {panes}
-        <Dividers dividers={subdivide.dividers} subdivide={subdivide} actions={actions} />
+        { panes }
+        <Dividers
+          actions={ actions }
+          dividers={ subdivide.dividers }
+          subdivide={ subdivide }
+        />
       </div>
     );
   }
