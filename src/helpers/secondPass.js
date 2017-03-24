@@ -9,10 +9,7 @@ import {
   JOIN_UP_ARROW,
   JOIN_LEFT_ARROW,
   JOIN_DOWN_ARROW
-} from '../constants'
-
-import { Divider } from '../reducers'
-import { Map } from 'immutable'
+} from '../reducers';
 
 function getJoinDirection({ subdivide, pane }) {
   const { cornerDown } = subdivide
@@ -54,7 +51,7 @@ function getJoinDirection({ subdivide, pane }) {
 }
 
 export default function secondPass(state) {
-  let dividerMap = Map()
+  let dividerMap = {};
 
   const { rootId, width, height } = state
   const left = 0
@@ -110,7 +107,7 @@ export default function secondPass(state) {
         if (hasDivider) {
           divider.width = cellSpacing
           divider.height = parent.height
-          dividerMap = dividerMap.set(divider.id, new Divider(divider))
+          dividerMap = dividerMap.set(divider.id, { ...divider })
           // state = state.setIn(['dividers', divider.id],
           //     new Divider(divider))
           x += cellSpacing
@@ -126,7 +123,7 @@ export default function secondPass(state) {
         if (hasDivider) {
           divider.width = parent.width
           divider.height = cellSpacing
-          dividerMap = dividerMap.set(divider.id, new Divider(divider))
+          dividerMap = dividerMap.set(divider.id, { ...divider })
           // state = state.setIn(['dividers', divider.id],
           //     new Divider(divider))
           y += cellSpacing
