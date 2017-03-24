@@ -1,103 +1,109 @@
-import React, { Component } from 'react'
-import Triangle from './Triangle'
-import CornerOverlay from './CornerOverlay'
+import React, { Component } from 'react';
+import Triangle from './Triangle';
+import CornerOverlay from './CornerOverlay';
 
-import {
-  NE,
-  SW,
-  SE,
-  NW
-} from '../constants'
+import { cardinals } from '../reducers';
 
 function getStyles({
-      width,
-      height,
-      top,
-      left
-    }) {
-  let pane = {
-    position: 'absolute',
-    width: width + 'px',
-    height: height + 'px',
-    top: top + 'px',
-    left: left + 'px',
-    overflow: 'hidden'
-  }
-
-  return { pane }
+  width,
+  height,
+  top,
+  left
+}) {
+  return {
+    pane: {
+      position: 'absolute',
+      width: width + 'px',
+      height: height + 'px',
+      top: top + 'px',
+      left: left + 'px',
+      overflow: 'hidden'
+    }
+  };
 }
 
 export default class Pane extends Component {
   constructor(props, context) {
-    super(props, context)
+    super(props, context);
 
     this.onMouseUp = () => {
-      //Note this on mouse up happens after subdivide on mouse up
-      const { actions, subdivide, pane } = this.props
-      const { join } = actions
-      if (!subdivide.cornerDown) return
-      const cornerDownId = subdivide.cornerDown.id
-      if(pane.joinDirection) {
-        join(cornerDownId, pane.id)
-        actions.setCornerDown(undefined)
+      // Note this on mouse up happens after Subdivide on mouse up
+      const { actions, subdivide, pane } = this.props;
+      const { join } = actions;
+      if (!subdivide.cornerDown) {
+        return null;
       }
-    }
+      const cornerDownId = subdivide.cornerDown.id;
+      if (pane.joinDirection) {
+        join(cornerDownId, pane.id);
+        actions.setCornerDown();
+      }
+      return null;
+    };
   }
 
   render() {
 
-    if (this.props.pane === undefined) {
-      return <div style={{ visibility: 'hidden' }}></div>
+    if (!this.props.pane) {
+      return <div style={{ visibility: 'hidden' }} />;
     }
 
     if (this.props.pane.isGroup) {
-      return null
+      return null;
     }
 
-    const { pane, subdivide, actions, DefaultComponent } = this.props
-    const styles = getStyles(pane)
+    const { pane, subdivide, actions, DefaultComponent } = this.props;
+    const styles = getStyles(pane);
 
     return (
-      <div style={styles.pane} onMouseMove={this.onMouseMove} onMouseUp={this.onMouseUp}>
+      <div
+        onMouseMove={ this.onMouseMove }
+        onMouseUp={ this.onMouseUp }
+        style={ styles.pane }
+        >
         <DefaultComponent
-          subdividePane={pane}
-          subdivideActions={actions}
-          subdivide={subdivide} />
-        <CornerOverlay pane={pane} subdivide={subdivide} />
-        <Triangle
-          corner={SW}
-          color="#dadadf"
-          size={42}
-          subdivide={subdivide}
-          pane={pane}
-          actions={actions}
+          subdivide={ subdivide }
+          subdivideActions={ actions }
+          subdividePane={ pane }
+        />
+        <CornerOverlay
+          pane={ pane }
+          subdivide={ subdivide }
         />
         <Triangle
-          corner={NE}
-          color="#dadadf"
-          size={42}
-          subdivide={subdivide}
-          pane={pane}
-          actions={actions}
+          actions={ actions }
+          color='#dadadf'
+          corner={ cardinals.sw }
+          pane={ pane }
+          size={ 42 }
+          subdivide={ subdivide }
         />
         <Triangle
-          corner={NW}
-          color="#dadadf"
-          size={42}
-          subdivide={subdivide}
-          pane={pane}
-          actions={actions}
+          actions={ actions }
+          color='#dadadf'
+          corner={ cardinals.ne }
+          pane={ pane }
+          size={ 42 }
+          subdivide={ subdivide }
         />
         <Triangle
-          corner={SE}
-          color="#dadadf"
-          size={42}
-          subdivide={subdivide}
-          pane={pane}
-          actions={actions}
+          actions={ actions }
+          color='#dadadf'
+          corner={ cardinals.nw }
+          pane={ pane }
+          size={ 42 }
+          subdivide={ subdivide }
+        />
+        <Triangle
+          actions={ actions }
+          color='#dadadf'
+          corner={ cardinals.se }
+          pane={ pane }
+          size={ 42 }
+          subdivide={ subdivide }
         />
       </div>
-    )
+    );
   }
 }
 
