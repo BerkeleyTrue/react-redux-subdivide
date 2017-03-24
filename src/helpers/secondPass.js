@@ -4,7 +4,11 @@ import {
   joinTypes
 } from '../reducers';
 
-function getJoinDirection(panesById, { id: cornerId, corner } = {}, pane) {
+function getJoinDirection(
+  panesById,
+ { id: cornerId, corner } = {},
+  child
+) {
   if (!cornerId) {
     return false;
   }
@@ -16,36 +20,53 @@ function getJoinDirection(panesById, { id: cornerId, corner } = {}, pane) {
   const siblings = parent.childIds;
   const direction = parent.direction;
   const index = siblings.indexOf(cornerId);
+
   const beforeId = index < 1 ? null : siblings[index - 1];
   const afterId = siblings[index + 1];
+
   const isBeforeGroup = beforeId !== null &&
     panesById[beforeId].isGroup;
   const isAfterGroup = afterId !== null &&
     panesById[afterId].isGroup;
-  const canJoinBefore = beforeId === pane.id && !isBeforeGroup;
-  const canJoinAfter = afterId === pane.id && !isAfterGroup;
 
-  return (
-    corner === cardinals.ne && (
-      (direction === directions.col && canJoinBefore && joinTypes.up) ||
-      (direction === directions.row && canJoinAfter && joinTypes.right)
-    )
-  ) || (
-    corner === cardinals.sw && (
-      (direction === directions.col && canJoinAfter && joinTypes.down) ||
-      (direction === directions.row && canJoinBefore && joinTypes.left)
-    )
-  ) || (
-    corner === cardinals.nw && (
-      (direction === directions.col && canJoinBefore && joinTypes.up) ||
-      (direction === directions.row && canJoinBefore && joinTypes.left)
-    )
-  ) || (
-    corner === cardinals.se && (
-      (direction === directions.col && canJoinAfter && joinTypes.down) ||
-      (direction === directions.row && canJoinAfter && joinTypes.right)
-    )
-  );
+  const canJoinBefore = beforeId === child.id && !isBeforeGroup;
+  const canJoinAfter = afterId === child.id && !isAfterGroup;
+
+  if (corner === cardinals.ne) {
+    if (direction === directions.col && canJoinBefore) {
+      return joinTypes.up;
+    }
+    if (direction === directions.row && canJoinAfter ) {
+      return joinTypes.right;
+    }
+  }
+
+  if (corner === cardinals.sw) {
+    if (direction === directions.col && canJoinAfter) {
+      return joinTypes.down;
+    }
+    if (direction === directions.row && canJoinBefore) {
+      return joinTypes.left;
+    }
+  }
+
+  if (corner === cardinals.nw) {
+    if (direction === directions.col && canJoinBefore) {
+      return joinTypes.up;
+    }
+    if (direction === directions.row && canJoinBefore) {
+      return joinTypes.left;
+    }
+  }
+  if (corner === cardinals.se) {
+    if (direction === directions.col && canJoinAfter) {
+      return joinTypes.down;
+    }
+    if (direction === directions.row && canJoinAfter) {
+      return joinTypes.right;
+    }
+  }
+  return null;
 }
 
 export default function secondPass(state) {
