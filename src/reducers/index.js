@@ -436,7 +436,11 @@ const firstPass = handleActions({
 });
 
 export default function reducer(state = createLayout(), action) {
-  return secondPass(firstPass(state, action));
+  const newState = firstPass(state, action);
+  if (newState === state) {
+    return state;
+  }
+  return secondPass(state);
 }
 
 reducer.toString = () => ns;
