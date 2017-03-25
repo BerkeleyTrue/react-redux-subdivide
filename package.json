@@ -11,16 +11,15 @@
     "start": "node devServer.js",
     "lint": "eslint src",
     "commit": "git-cz",
-    "open-coverage": "open ./coverage/lcov-report/index.html",
-    "check-coverage": "nyc check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
-    "report-coverage": "nyc report --reporter=text-lcov | codecov",
-    "test": "npm run test:mocha",
-    "test:watch": "npm run test:mocha:watch",
-    "test:mocha": "NODE_ENV=lib mocha --opts mocha.opts",
-    "test:mocha:watch": "npm run test:mocha -- --watch -b",
-    "test:ava": "NODE_ENV=test ava src/**/*.test.js --require babel-register --require ./src/scripts/null-compiler",
-    "test:ava:watch": "nodemon -w src --exec 'npm t -- --verbose'",
-    "test:cover": "nyc --reporter=lcov --reporter=text npm t",
+    "test": "npm run test:ava",
+    "test:watch": "npm run test:ava:watch",
+    "test:ava": "NODE_ENV=test nyc ava",
+    "test:ava:watch": "NODE_ENV=test ava --watch",
+    "cover": "nyc report --reporter=html",
+    "cover:watch": "nodemon --watch test/ --exec 'npm run test && npm run cover'",
+    "cover:show": "open coverage/index.html",
+    "cover:alls": "nyc report --reporter=text-lcov | coveralls",
+    "coverage:check": "nyc check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
@@ -38,6 +37,17 @@
     "blender",
     "devtools"
   ],
+  "ava": {
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit",
+    "failFast": true
+  },
+  "nyc": {
+    "sourceMap": false,
+    "instrument": false
+  },
   "author": "Phil Holden (http://github.com/philholden)",
   "license": "MIT",
   "bugs": {
@@ -45,11 +55,12 @@
   },
   "homepage": "https://github.com/philholden/subdivide",
   "devDependencies": {
-    "ava": "^0.9.1",
+    "ava": "^0.18.2",
     "babel-cli": "^6.4.0",
     "babel-core": "^6.3.15",
     "babel-eslint": "^7.2.1",
     "babel-loader": "^6.2.0",
+    "babel-plugin-istanbul": "^4.1.1",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-plugin-webpack-loaders": "^0.1.0",
     "babel-preset-es2015": "^6.3.13",
@@ -80,8 +91,8 @@
     "ghooks": "0.3.2",
     "is_js": "^0.7.6",
     "mocha": "^2.3.3",
-    "nodemon": "^1.8.1",
-    "nyc": "^5.3.0",
+    "nodemon": "^1.11.0",
+    "nyc": "^10.1.2",
     "react": "^0.14.3",
     "react-addons-test-utils": "^0.14.6",
     "react-docgen": "^2.6.1",
