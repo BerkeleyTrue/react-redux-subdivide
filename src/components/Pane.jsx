@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Triangle from './Triangle';
-import CornerOverlay from './CornerOverlay';
+import Triangle from './Triangle.jsx';
+import CornerOverlay from './CornerOverlay.jsx';
 
 import { cardinals } from '../reducers';
 

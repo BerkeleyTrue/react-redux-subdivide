@@ -1,6 +1,6 @@
 import React from 'react';
 import { directions } from '../reducers';
-import DividerTouch from './DividerTouch';
+import DividerTouch from './DividerTouch.jsx';
 
 let Rect = (props) => {
   let { style } = props;
