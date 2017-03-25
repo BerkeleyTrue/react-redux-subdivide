@@ -40,14 +40,13 @@ export const types = createTypes([
   'JOIN',
   'SPLIT',
 
-  'SET_STATE',
   'CORNER_DOWN',
   'ADD_CHILD_PANE',
   'REMOVE_CHILD_PANE',
   'REMOVE_PARENT_PANE',
 
   'SET_SPLIT_RATIO',
-  'SET_SIZE',
+  'windowResize',
   'SET_BLOCK',
   'SET_DIVIDER_DOWN',
   'SET_CORNER_DOWN',
@@ -108,19 +107,15 @@ export const split = createAction(
     startY
   })
 );
-export const setPaneProps = createAction(
-  types.SET_PANE_PROPS,
-  (id, props) => ({ id, props })
-);
+
 export const setSplitRatio = createAction(
   types.SET_SPLIT_RATIO,
   (id, splitRatio) => ({ id, splitRatio })
 );
-export const setSize = createAction(
-  types.SET_SIZE,
+export const windowResize = createAction(
+  types.windowResize,
   (width, height) => ({ width, height })
 );
-export const setState = createAction(types.SET_STATE);
 export const setBlock = createAction(types.SET_BLOCK);
 export const setCornerHover = createAction(types.SET_CORNER_HOVER);
 export const setCornerDown = createAction(types.SET_CORNER_DOWN);
@@ -390,7 +385,7 @@ const firstPass = handleActions({
     };
   },
 
-  [types.SET_SIZE]: (state, { payload: { width, height } }) => {
+  [types.windowResize]: (state, { payload: { width, height } }) => {
     return {
       ...state,
       width,
@@ -416,24 +411,6 @@ const firstPass = handleActions({
     return {
       ...state,
       dividerDown: divider
-    };
-  },
-
-  [types.SET_STATE]: (state, action) => {
-    return action.state;
-  },
-
-  [types.SET_PANE_PROPS]: (state, { payload: { id, props } }) => {
-    const { panesById } = state;
-    return {
-      ...state,
-      panesById: {
-        ...panesById,
-        [id]: {
-          ...panesById[id],
-          props
-        }
-      }
     };
   }
 }, createLayout());

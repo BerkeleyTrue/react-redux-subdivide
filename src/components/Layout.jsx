@@ -1,26 +1,53 @@
-import React, { Component } from 'react';
-import Pane from './Pane';
-import Dividers from './Dividers';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
+import Pane from './Pane.jsx';
+import Dividers from './Dividers.jsx';
 import AnimationFrame from '../helpers/AnimationFrame';
 import {
   cardinals,
   directions,
   downDividerSelector,
-  splitTypes
+  splitTypes,
+
+  setCornerDown,
+  setDividerDown,
+  setSplitRatio,
+  split,
+  windowResize
 } from '../reducers';
 
-export default class Layout extends Component {
-  static defaultProps = {
-    iframeSafe: true
-  };
+const mapStateToProps = null;
+const mapDispatchToProps = {
+  setCornerDown,
+  setDividerDown,
+  setSplitRatio,
+  split,
+  windowResize
+};
 
-  constructor(props, context) {
-    super(props, context);
+const propTypes = {
+  DefaultComponent: PropTypes.element,
+  setCornerDown: PropTypes.func,
+  setDividerDown: PropTypes.func,
+  setSplitRatio: PropTypes.func,
+  split: PropTypes.func,
+  windowResize: PropTypes.func
+};
+
+export class Layout extends Component {
+  constructor(props, ...args) {
+    super(props, ...args);
+    const {
+      setCornerDown,
+      setDividerDown,
+      setSplitRatio,
+      split,
+      windowResize
+    } = props;
     this.animationFrame = new AnimationFrame();
-    const { setSize } = props.actions;
 
     this.onMouseMove = this.animationFrame.throttle(({ clientX, clientY }) => {
-      const { actions, subdivide } = this.props;
+      const { subdivide } = this.props;
 
       if (subdivide.dividerDown) {
         const divider = subdivide.dividerDown;
@@ -40,14 +67,13 @@ export default class Layout extends Component {
         let afterRatio = divider.afterRatio - deltaRatio;
         let beforeRatio = divider.beforeRatio + deltaRatio;
         if (beforeRatio * parentSize > 20 && afterRatio * parentSize > 20) {
-          actions.setSplitRatio(beforePaneId, beforeRatio);
-          actions.setSplitRatio(afterPaneId, afterRatio);
+          setSplitRatio(beforePaneId, beforeRatio);
+          setSplitRatio(afterPaneId, afterRatio);
         }
       }
 
       if (subdivide.cornerDown) {
         const pane = subdivide.cornerDown;
-        const { split } = actions;
         const { width, height, left, top, id, corner } = pane;
 
         if (clientX > left && clientX < left + width &&
@@ -90,27 +116,27 @@ export default class Layout extends Component {
     });
 
     this.onMouseUp = () => {
-      const { actions, subdivide } = this.props;
+      const { subdivide } = this.props;
       if (subdivide.dividerDown) {
-        actions.setDividerDown();
+        setDividerDown();
       }
       // give pane onMouseUp a chance to fire
       setTimeout(()=>{
         if (subdivide.cornerDown) {
-          actions.setCornerDown();
+          setCornerDown();
         }
       }, 10);
     };
 
     window.addEventListener('resize', () => {
-      setSize(window.innerWidth, window.innerHeight);
+      windowResize(window.innerWidth, window.innerHeight);
     });
 
     document.addEventListener('mouseup', this.onMouseUp);
     document.addEventListener('mousemove', this.onMouseMove);
 
 
-    setSize(window.innerWidth, window.innerHeight);
+    windowResize(window.innerWidth, window.innerHeight);
   }
 
   componentWillUnmount() {
@@ -118,14 +144,13 @@ export default class Layout extends Component {
   }
 
   render() {
-    const { subdivide, actions, DefaultComponent } = this.props;
+    const { subdivide, DefaultComponent } = this.props;
     const panes = Object.keys(subdivide.panesById)
       .map(key => subdivide.panesById[key])
       .filter(pane => !pane.isGroup)
       .map(pane => {
         return (
           <Pane
-            actions={ actions }
             DefaultComponent={ DefaultComponent }
             key={ pane.id }
             pane={ pane }
@@ -138,7 +163,6 @@ export default class Layout extends Component {
       <div>
         { panes }
         <Dividers
-          actions={ actions }
           dividers={ subdivide.dividers }
           subdivide={ subdivide }
         />
@@ -146,3 +170,11 @@ export default class Layout extends Component {
     );
   }
 }
+
+Layout.propTypes = propTypes;
+Layout.displayName = 'Layout';
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Layout);
