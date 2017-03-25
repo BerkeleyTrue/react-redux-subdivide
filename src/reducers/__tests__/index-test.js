@@ -4,7 +4,8 @@ import reducer, {
   createPane,
   directions,
   splitTypes,
-  types
+  split,
+  join
 } from '../';
 
 describe('pane reducer', () => {
@@ -22,11 +23,7 @@ describe('pane reducer', () => {
     beforeEach(() => {
       startState = createLayout();
 
-      action = {
-        type: types.SPLIT,
-        id: 0,
-        splitType: splitTypes.right
-      };
+      action = split(0, splitTypes.right);
 
       endState = reducer(startState, action);
       original = endState.panesById[0];
@@ -61,11 +58,7 @@ describe('pane reducer', () => {
     beforeEach(() => {
       startState = createLayout();
 
-      action = {
-        type: types.SPLIT,
-        id: 0,
-        splitType: splitTypes.left
-      };
+      action = split(0, splitTypes.left);
 
       endState = reducer(startState, action);
       original = endState.panesById[0];
@@ -87,16 +80,12 @@ describe('pane reducer', () => {
     beforeEach(() => {
       startState = createLayout();
 
-      action = {
-        type: types.SPLIT,
-        id: 0,
-        splitType: splitTypes.above
-      };
+      action = split(0, splitTypes.above);
 
       endState = reducer(startState, action);
       original = endState.panesById[0];
       parent = endState.panesById[original.parentId];
-      added = endState.panesById[parent.childIds.first()];
+      added = endState.panesById[parent.childIds[0]];
     });
 
     it('parent should have two children in correct order', () => {
@@ -104,7 +93,7 @@ describe('pane reducer', () => {
     });
 
     it('parents direction should be col', () => {
-      expect(parent.direction).toEqual(directions.row);
+      expect(parent.direction).toEqual(directions.col);
     });
   });
 
@@ -113,16 +102,12 @@ describe('pane reducer', () => {
     beforeEach(() => {
       startState = createLayout();
 
-      action = {
-        type: types.SPLIT,
-        id: 0,
-        splitType: splitTypes.below
-      };
+      action = split(0, splitTypes.below);
 
       endState = reducer(startState, action);
       original = endState.panesById[0];
       parent = endState.panesById[original.parentId];
-      added = endState.panesById[parent.childIds[parent.childIds.lengt - 1]];
+      added = endState.panesById[parent.childIds[parent.childIds.length - 1]];
     });
 
     it('parent should have two children in correct order', () => {
@@ -130,7 +115,7 @@ describe('pane reducer', () => {
     });
 
     it('parents direction should be col', () => {
-      expect(parent.direction).toEqual(directions.row);
+      expect(parent.direction).toEqual(directions.col);
     });
   });
 
@@ -166,12 +151,7 @@ describe('pane reducer', () => {
         }
       });
 
-      action = {
-        type: types.JOIN,
-        removeId: 0,
-        retainId: 2
-      };
-
+      action = join(2, 0);
       endState = reducer(startState, action);
     });
 
@@ -180,11 +160,11 @@ describe('pane reducer', () => {
     });
 
     it('parent pane should be deleted', () => {
-      expect(endState.panesById[1]).toBe(null);
+      expect(endState.panesById[1]).toNotExist();
     });
 
     it('removed pane should be deleted', () => {
-      expect(endState.panesById[0]).toBe(null);
+      expect(endState.panesById[0]).toNotExist();
     });
 
     it('remaining pane should exist', () => {
@@ -192,11 +172,11 @@ describe('pane reducer', () => {
     });
 
     it('remaining pane should not have direction', () => {
-      expect(endState.panesById[2].direction).toBe(null);
+      expect(endState.panesById[2].direction).toNotExist();
     });
 
     it('remaining pane should not have parent', () => {
-      expect(endState.panesById[2].parent).toBe(null);
+      expect(endState.panesById[2].parent).toNotExist();
     });
 
   });
@@ -242,14 +222,8 @@ describe('pane reducer', () => {
         }
       });
 
-      action = {
-        type: types.JOIN,
-        removeId: 0,
-        retainId: 2
-      };
-
+      action = join(2, 0);
       endState = reducer(startState, action);
-      // console.log(endState)
     });
 
     it('root should be unchanged', () => {
@@ -265,7 +239,7 @@ describe('pane reducer', () => {
     });
 
     it('removed pane should be deleted', () => {
-      expect(endState.panesById[0]).toBe(null);
+      expect(endState.panesById[0]).toNotExist();
     });
 
     it('remaining pane should exist', () => {
@@ -282,60 +256,56 @@ describe('pane reducer', () => {
     beforeEach(() => {
       startState = createLayout({
         rootId: 1,
-        0: createPane({
-          id: 0,
-          childIds: [],
-          isGroup: false,
-          direction: null,
-          parentId: 1,
-          splitRatio: 0.25
-        }),
-        1: createPane({
-          id: 1,
-          childIds: [ 0, 2 ],
-          isGroup: true,
-          direction: directions.row,
-          parentId: null,
-          splitRatio: 1
-        }),
-        2: createPane({
-          id: 2,
-          childIds: [ 3, 4 ],
-          isGroup: true,
-          direction: null,
-          parentId: 1,
-          splitRatio: 0.75
-        }),
-        3: createPane({
-          id: 3,
-          childIds: [],
-          isGroup: false,
-          direction: null,
-          parentId: 2,
-          splitRatio: 0.75
-        }),
-        4: createPane({
-          id: 4,
-          childIds: [],
-          isGroup: false,
-          direction: null,
-          parentId: 2,
-          splitRatio: 0.75
-        })
+        panesById: {
+          0: createPane({
+            id: 0,
+            childIds: [],
+            isGroup: false,
+            direction: null,
+            parentId: 1,
+            splitRatio: 0.25
+          }),
+          1: createPane({
+            id: 1,
+            childIds: [ 0, 2 ],
+            isGroup: true,
+            direction: directions.row,
+            parentId: null,
+            splitRatio: 1
+          }),
+          2: createPane({
+            id: 2,
+            childIds: [ 3, 4 ],
+            isGroup: true,
+            direction: null,
+            parentId: 1,
+            splitRatio: 0.75
+          }),
+          3: createPane({
+            id: 3,
+            childIds: [],
+            isGroup: false,
+            direction: null,
+            parentId: 2,
+            splitRatio: 0.75
+          }),
+          4: createPane({
+            id: 4,
+            childIds: [],
+            isGroup: false,
+            direction: null,
+            parentId: 2,
+            splitRatio: 0.75
+          })
+        }
       });
 
-      action = {
-        type: types.JOIN,
-        removeId: 4,
-        retainId: 3
-      };
-
+      action = join(3, 4);
       endState = reducer(startState, action);
-      // console.log(endState)
     });
 
     it('parent should be deleted', () => {
-      expect(endState.panesById[2]).toBe(null);
+      expect(endState.panesById[2]).toNotExist();
     });
 
     it('remaining should be added to grandparents children', () => {
@@ -347,7 +317,7 @@ describe('pane reducer', () => {
     });
 
     it('removed pane should be deleted', () => {
-      expect(endState.panesById[4]).toBe(null);
+      expect(endState.panesById[4]).toNotExist();
     });
 
     it('remaining pane should exist', () => {
@@ -355,10 +325,7 @@ describe('pane reducer', () => {
     });
 
     it('remaining pane should not have direction', () => {
-      expect(endState.panesById[3].direction).toBe(null);
+      expect(endState.panesById[3].direction).toNotExist();
     });
-
   });
-
-
 });

@@ -119,6 +119,7 @@ export default function secondPass(state) {
             parent.width :
             parent.height
         };
+        dividers[divider.id] = divider;
       }
       let width, height, left, top;
 
@@ -149,7 +150,6 @@ export default function secondPass(state) {
       child.height = height;
       child.left = left;
       child.top = top;
-      dividers[divider.id] = divider;
 
       beforePaneId = child.id;
       beforeRatio = child.splitRatio;

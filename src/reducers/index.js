@@ -1,5 +1,5 @@
 import {
-  createActions,
+  createAction,
   handleActions
 } from 'redux-actions';
 import { createTypes } from 'redux-create-types';
@@ -95,41 +95,36 @@ function getSplitDirection(splitType) {
   return null;
 }
 
-export const {
-  join,
-  split,
-
-  setPaneProps,
-  setSplitRatio,
-
-  setSize,
-  setState,
-  setBlock,
-
-  setCornerHover,
-  setCornerDown,
-
-  setDividerDown
-} = createActions(
-  {
-    [types.JOIN]: (retainId, removeId) => ({ retainId, removeId }),
-    [types.SPLIT]: (id, splitType, startX, startY) => ({
-      id,
-      splitType,
-      startX,
-      startY
-    }),
-
-    [types.SET_PANE_PROPS]: (id, props) => ({ id, props }),
-    [types.SET_SPLIT_RATIO]: (id, splitRatio) => ({ id, splitRatio }),
-    [types.SET_SIZE]: (width, height) => ({ width, height })
-  },
-  types.SET_STATE,
-  types.SET_BLOCK,
-  types.SET_CORNER_HOVER,
-  types.SET_CORNER_DOWN,
-  types.SET_DIVIDER_DOWN
+export const join = createAction(
+  types.JOIN,
+  (retainId, removeId) => ({ retainId, removeId })
 );
+export const split = createAction(
+  types.SPLIT,
+  (id, splitType, startX = 0, startY = 0) => ({
+    id,
+    splitType,
+    startX,
+    startY
+  })
+);
+export const setPaneProps = createAction(
+  types.SET_PANE_PROPS,
+  (id, props) => ({ id, props })
+);
+export const setSplitRatio = createAction(
+  types.SET_SPLIT_RATIO,
+  (id, splitRatio) => ({ id, splitRatio })
+);
+export const setSize = createAction(
+  types.SET_SIZE,
+  (width, height) => ({ width, height })
+);
+export const setState = createAction(types.SET_STATE);
+export const setBlock = createAction(types.SET_BLOCK);
+export const setCornerHover = createAction(types.SET_CORNER_HOVER);
+export const setCornerDown = createAction(types.SET_CORNER_DOWN);
+export const setDividerDown = createAction(types.SET_DIVIDER_DOWN);
 
 function getOffset(splitType) {
   if (
@@ -160,7 +155,7 @@ function areNotAdjacent({ childIds }, { id: removeId }, { id: retainId }) {
   );
 }
 
-function getNextId({ panes = [ 0 ] }) {
+function getNextId(panes = [ 0 ]) {
   const id = panes[ panes.length - 1 ];
   return id + 1;
 }
@@ -205,22 +200,23 @@ const firstPass = handleActions({
   // pane (id 1) make this the root pane, create a new pane, and finally attach
   // those two panes as children of the new root group pane
   // Split(0) => Group(1) < Children(0, 2)
-  [types.SPLIT]: (state, { id, splitType, startX, startY }) => {
+  [types.SPLIT]: (state, { payload: { id, splitType, startX, startY } }) => {
     const panes = [ ...state.panes ];
     const panesById = { ...state.panesById };
     const currentPane = { ...panesById[id] };
     const { parentID: oldParentId, splitRatio } = currentPane;
     let rootId = state.rootId;
     const isRoot = id === rootId;
-    const oldParent = isRoot ? false : { ...panesById[oldParentId] };
+    const oldParent = { ...panesById[oldParentId] };
+    const offset = getOffset(splitType);
     const direction = getSplitDirection(splitType);
-    const currentParent = oldParent;
+    let currentParent = { ...oldParent };
 
     // if no parent or if parent direction is not the same
     // as the split a new group must be created
-    if (!oldParent || oldParent.direction !== direction) {
+    if (oldParent.direction !== direction) {
       // current pane being split
-      const newParentId = getNextId(state);
+      const newParentId = getNextId(panes);
       panes.push(newParentId);
 
       if (isRoot) {
@@ -242,14 +238,16 @@ const firstPass = handleActions({
 
       // update parent's child id's
       // to the new parent pane's id
-      if (oldParent) {
+      // we check for any property on
+      // the parent because it can be an empty object
+      if (oldParent.id) {
         const oldParentChildren = [ ...oldParent.childIds ];
         oldParentChildren[ oldParentChildren.indexOf(id) ] = newParentId;
         oldParent.childIds = oldParentChildren;
       }
     }
 
-    // at this point currentParent should always point to a pane
+    // at this point current parent should always point to a pane
     const childIds = [ ...currentParent.childIds ];
     const currentPaneIndex = childIds.indexOf(id);
 
@@ -257,18 +255,18 @@ const firstPass = handleActions({
       startX,
       startY,
       direction,
+      offset,
       currentParent.id === oldParentId,
       currentPane
     );
     currentPane.splitRatio = ratioA;
     const newPane = createPane({
-      id: getNextId(state),
+      id: getNextId(panes),
       parentId: currentParent.id,
       splitRatio: ratioB
     });
     panes.push(newPane.id);
 
-    const offset = getOffset(splitType);
     //  insert new pane into children of current parent pane
     childIds.splice(currentPaneIndex + offset, 0, newPane.id);
     currentParent.childIds = childIds;
@@ -290,7 +288,7 @@ const firstPass = handleActions({
       rootId,
       panesById,
       dividerDown,
-      cornerDown: null
+      cornerDown: undefined
     };
   },
 
@@ -300,10 +298,10 @@ const firstPass = handleActions({
   // if parent only has one child
   //  - if parent is root, remove and make remaining child root
   //  - otherwise remove parent and attach child to grandparent
-  [types.JOIN]: (state, { retainId, removeId }) => {
-    const { panesById } = state;
+  [types.JOIN]: (state, { payload: { retainId, removeId } }) => {
+    const panesById = { ...state.panesById };
     const remove = panesById[removeId];
-    const retain = panesById[retainId];
+    const retain = { ...panesById[retainId] };
     const parent = panesById[retain.parentId];
     let rootId = state.rootId;
     if (remove.isGroup) {
@@ -319,7 +317,6 @@ const firstPass = handleActions({
       return state;
     }
     // splice pane out of parents childIds
-    const newPanesById = { ...panesById };
 
     // grab siblings
     const childIds = [ ...parent.childIds ];
@@ -328,7 +325,7 @@ const firstPass = handleActions({
     // create child array with just removed pane
     childIds.splice(index, 1);
     // update panesById with new parent
-    newPanesById[parent.id] = {
+    panesById[parent.id] = {
       ...parent,
       childIds
     };
@@ -336,14 +333,14 @@ const firstPass = handleActions({
     // if parent now only has one child (the retain pane)
     // it is no longer a group and can be removed
     // and this retaining child moved up to it's grandparent
-    if (childIds.size === 1) {
+    if (childIds.length === 1) {
       const newRetain = {
         ...retain,
         direction: null
       };
       // group is the root pane. It can be removed and the remaining made
       // the new root
-      if (parent.id === state.rootId) {
+      if (parent.id === rootId) {
         rootId = retainId;
         newRetain.parentId = null;
       } else {
@@ -358,32 +355,28 @@ const firstPass = handleActions({
         grandparent.childIds = grandchildIds;
 
         newRetain.parentId = grandparentId;
-
-        newPanesById[grandparentId] = grandparent;
+        panesById[grandparentId] = grandparent;
       }
-      delete newPanesById[parent.id];
-      newPanesById[newRetain.id] = newRetain;
+      delete panesById[parent.id];
+      panesById[newRetain.id] = newRetain;
     }
-    delete newPanesById[removeId];
+    delete panesById[removeId];
 
-    const newParentId = newPanesById[retainId].parentId;
-    const splitRatio = parent.id === newParentId ?
+    const parentId = panesById[retainId].parentId;
+    const splitRatio = parent.id === parentId ?
       remove.splitRatio + retain.splitRatio :
       parent.splitRatio;
 
-    newPanesById[retainId] = {
-      ...retain,
-      splitRatio
-    };
+    panesById[retainId].splitRatio = splitRatio;
     return {
       ...state,
       // possible new if parent was root and had one remaining child
       rootId,
-      panesById: newPanesById
+      panesById
     };
   },
 
-  [types.SET_SPLIT_RATIO]: (state, { id, splitRatio }) => {
+  [types.SET_SPLIT_RATIO]: (state, { payload: { id, splitRatio } }) => {
     const { panesById } = state;
     return {
       ...state,
@@ -397,7 +390,7 @@ const firstPass = handleActions({
     };
   },
 
-  [types.SET_SIZE]: (state, { width, height }) => {
+  [types.SET_SIZE]: (state, { payload: { width, height } }) => {
     return {
       ...state,
       width,
@@ -405,21 +398,21 @@ const firstPass = handleActions({
     };
   },
 
-  [types.SET_CORNER_DOWN]: (state, { cornerDown }) => {
+  [types.SET_CORNER_DOWN]: (state, { payload: { cornerDown } }) => {
     return {
       ...state,
       cornerDown
     };
   },
 
-  [types.SET_CORNER_HOVER]: (state, { cornerHover }) => {
+  [types.SET_CORNER_HOVER]: (state, { payload: { cornerHover } }) => {
     return {
       ...state,
       cornerHover
     };
   },
 
-  [types.SET_DIVIDER_DOWN]: (state, { divider }) => {
+  [types.SET_DIVIDER_DOWN]: (state, { payload: { divider } }) => {
     return {
       ...state,
       dividerDown: divider
@@ -430,7 +423,7 @@ const firstPass = handleActions({
     return action.state;
   },
 
-  [types.SET_PANE_PROPS]: (state, { id, props }) => {
+  [types.SET_PANE_PROPS]: (state, { payload: { id, props } }) => {
     const { panesById } = state;
     return {
       ...state,
@@ -450,7 +443,7 @@ export default function reducer(state, action) {
   if (newState === state) {
     return state;
   }
-  return secondPass(state);
+  return secondPass(newState);
 }
 
 reducer.toString = () => ns;
