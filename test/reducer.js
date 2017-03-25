@@ -65,9 +65,123 @@ test('split below', (t) => {
   t.is(parent.direction, directions.col);
 });
 
+test('split non-root into two', t => {
+  const startState = createLayout({
+    rootId: 1,
+    panes: [ 0, 1, 2, 3 ],
+    panesById: {
+      0: createPane({
+        id: 0,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.33
+      }),
+      1: createPane({
+        id: 1,
+        childIds: [ 0, 2, 3 ],
+        isGroup: true,
+        direction: directions.row,
+        parentId: null,
+        splitRatio: 1
+      }),
+      2: createPane({
+        id: 2,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.33
+      }),
+      3: createPane({
+        id: 3,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.33
+      })
+    }
+  });
+  const endState = reducer(startState, split(3, splitTypes.above));
+  t.truthy(
+    endState.panesById[3],
+    'split pane should still exist'
+  );
+  t.truthy(
+    endState.panesById[4],
+    'split did not create a new parent pane'
+  );
+  t.deepEqual(
+    endState.panesById[4].childIds,
+    [5, 3],
+    'split new parent does not have correct children'
+  );
+  t.deepEqual(
+    endState.panesById[1].childIds,
+    [0, 2, 4]
+  );
+});
+
+test('split pane in same direction', t => {
+  const startState = createLayout({
+    rootId: 1,
+    panes: [ 0, 1, 2 ],
+    panesById: {
+      0: createPane({
+        id: 0,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.33
+      }),
+      1: createPane({
+        id: 1,
+        childIds: [ 0, 2 ],
+        isGroup: true,
+        direction: directions.row,
+        parentId: null,
+        splitRatio: 1
+      }),
+      2: createPane({
+        id: 2,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.33
+      })
+    }
+  });
+  const endState = reducer(startState, split(2, splitTypes.left));
+  t.truthy(
+    endState.panesById[2],
+    'split pane was removed'
+  );
+  t.truthy(
+    endState.panesById[3],
+    'split should create new pane'
+  );
+  t.is(
+    endState.panes.reduce((sum, paneId) => {
+      return endState.panesById[paneId].isGroup ? sum + 1 : sum;
+    }, 0),
+    1,
+    'split should not add a new parent'
+  );
+  t.deepEqual(
+    endState.panesById[1].childIds,
+    [ 0, 3, 2],
+    'parent should have new child'
+  );
+});
+
 test('join one of two in row below root', (t) => {
   const startState = createLayout({
     rootId: 1,
+    panes: [ 0, 1, 2 ],
     panesById: {
       0: createPane({
         id: 0,
@@ -206,10 +320,27 @@ test('join one of two in row below root', (t) => {
   const action = join(3, 4);
   const endState = reducer(startState, action);
 
-  t.falsy(endState.panesById[2]);
-  t.deepEqual(endState.panesById[1].childIds, [ 0, 3 ]);
-  t.is(endState.panesById[3].parentId, 1);
-  t.falsy(endState.panesById[4]);
-  t.truthy(endState.panesById[3]);
-  t.falsy(endState.panesById[3].direction);
+  t.truthy(
+    endState.panesById[3],
+    'join was removed'
+  );
+  t.is(
+    endState.panesById[3].parentId,
+    1,
+    'join does not have grandparent as new parent'
+  );
+  t.falsy(
+    endState.panesById[3].direction,
+    'join pane should not have a direction'
+  );
+  t.falsy(endState.panesById[2], 'old parent was not removed');
+  t.deepEqual(
+    endState.panesById[1].childIds,
+    [ 0, 3 ],
+    'new parent does not have the correct children'
+  );
+  t.falsy(
+    endState.panesById[4],
+    'joined into should was not removed'
+  );
 });

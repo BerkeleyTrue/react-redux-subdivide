@@ -14,12 +14,12 @@
     "test": "npm run test:ava",
     "test:watch": "npm run test:ava:watch",
     "test:ava": "NODE_ENV=test nyc ava",
-    "test:ava:watch": "NODE_ENV=test ava --watch",
+    "test:ava:watch": "NODE_ENV=test ava --verbose --watch",
     "cover": "nyc report --reporter=html",
-    "cover:watch": "nodemon --watch test/ --exec 'npm run test && npm run cover'",
+    "cover:watch": "nodemon -e js,jsx --watch src/ test/ --exec 'npm run test && npm run cover'",
     "cover:show": "open coverage/index.html",
     "cover:alls": "nyc report --reporter=text-lcov | coveralls",
-    "coverage:check": "nyc check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
+    "cover:check": "nyc check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
@@ -112,7 +112,7 @@
   },
   "config": {
     "ghooks": {
-      "pre-push": "npm run test && npm run check-coverage"
+      "pre-push": "npm run test && npm run cover:check"
     },
     "commitizen": {
       "path": "node_modules/cz-conventional-changelog"
@@ -123,6 +123,7 @@
   },
   "dependencies": {
     "redux-actions": "^2.0.1",
-    "redux-create-types": "0.0.1"
+    "redux-create-types": "0.0.1",
+    "reselect": "^3.0.0"
   }
 }

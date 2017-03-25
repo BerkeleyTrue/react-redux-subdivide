@@ -199,7 +199,7 @@ const firstPass = handleActions({
     const panes = [ ...state.panes ];
     const panesById = { ...state.panesById };
     const currentPane = { ...panesById[id] };
-    const { parentID: oldParentId, splitRatio } = currentPane;
+    const { parentId: oldParentId, splitRatio } = currentPane;
     let rootId = state.rootId;
     const isRoot = id === rootId;
     const oldParent = { ...panesById[oldParentId] };
@@ -239,6 +239,7 @@ const firstPass = handleActions({
         const oldParentChildren = [ ...oldParent.childIds ];
         oldParentChildren[ oldParentChildren.indexOf(id) ] = newParentId;
         oldParent.childIds = oldParentChildren;
+        panesById[oldParentId] = oldParent;
       }
     }
 
