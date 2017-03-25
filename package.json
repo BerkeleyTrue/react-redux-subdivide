@@ -17,7 +17,7 @@
     "test": "npm run test:mocha",
     "test:watch": "npm run test:mocha:watch",
     "test:mocha": "NODE_ENV=lib mocha --opts mocha.opts",
-    "test:mocha:watch": "npm run test:mocha -- --watch",
+    "test:mocha:watch": "npm run test:mocha -- --watch -b",
     "test:ava": "NODE_ENV=test ava src/**/*.test.js --require babel-register --require ./src/scripts/null-compiler",
     "test:ava:watch": "nodemon -w src --exec 'npm t -- --verbose'",
     "test:cover": "nyc --reporter=lcov --reporter=text npm t",
