@@ -11,16 +11,17 @@ import {
 
   setCornerDown,
   setDividerDown,
-  setSplitRatio,
+  dividerMoved,
   split,
   windowResize
 } from '../reducers';
 
+const minRatioChange = 20;
 const mapStateToProps = null;
 const mapDispatchToProps = {
   setCornerDown,
   setDividerDown,
-  setSplitRatio,
+  dividerMoved,
   split,
   windowResize
 };
@@ -29,7 +30,7 @@ const propTypes = {
   DefaultComponent: PropTypes.element,
   setCornerDown: PropTypes.func,
   setDividerDown: PropTypes.func,
-  setSplitRatio: PropTypes.func,
+  dividerMoved: PropTypes.func,
   split: PropTypes.func,
   windowResize: PropTypes.func
 };
@@ -40,7 +41,7 @@ export class Layout extends Component {
     const {
       setCornerDown,
       setDividerDown,
-      setSplitRatio,
+      dividerMoved,
       split,
       windowResize
     } = props;
@@ -60,15 +61,17 @@ export class Layout extends Component {
           startY
         } = downDividerSelector(subdivide);
 
-        let delta = direction === directions.row ?
+        const delta = direction === directions.row ?
           clientX - startX :
           clientY - startY;
-        let deltaRatio = delta / parentSize;
-        let afterRatio = divider.afterRatio - deltaRatio;
-        let beforeRatio = divider.beforeRatio + deltaRatio;
-        if (beforeRatio * parentSize > 20 && afterRatio * parentSize > 20) {
-          setSplitRatio(beforePaneId, beforeRatio);
-          setSplitRatio(afterPaneId, afterRatio);
+        const deltaRatio = delta / parentSize;
+        const afterRatio = divider.afterRatio - deltaRatio;
+        const beforeRatio = divider.beforeRatio + deltaRatio;
+        if (
+          beforeRatio * parentSize > minRatioChange &&
+          afterRatio * parentSize > minRatioChange
+        ) {
+          dividerMoved(beforePaneId, afterPaneId, beforeRatio, afterRatio);
         }
       }
 

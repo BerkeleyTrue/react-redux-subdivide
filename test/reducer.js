@@ -6,7 +6,8 @@ import reducer, {
   directions,
   splitTypes,
   split,
-  join
+  join,
+  dividerMoved
 } from '../src/reducers';
 
 test('split right', (t) => {
@@ -342,5 +343,47 @@ test('join one of two in row below root', (t) => {
   t.falsy(
     endState.panesById[4],
     'joined into should was not removed'
+  );
+});
+
+test('divider moved', t => {
+  const endState = reducer(
+    createLayout({
+      panes: [ 0, 1, 3 ],
+      panesById: {
+        0: createPane({
+          id: 0,
+          splitRatio: 0.3,
+          parentId: 1
+        }),
+        1: createPane({
+          id: 1,
+          isGroup: 1,
+          childIds: [ 0, 1 ]
+        }),
+        2: createPane({
+          id: 2,
+          splitRatio: 0.7,
+          parentId: 1
+        })
+      }
+    }),
+    dividerMoved(
+      0,
+      2,
+      0.2,
+      0.8
+    )
+  );
+
+  t.is(
+    endState.panesById[0].splitRatio,
+    0.2,
+    'after pane split ratio did not update'
+  );
+  t.is(
+    endState.panesById[2].splitRatio,
+    0.8,
+    'before pane split ratio did not update'
   );
 });
