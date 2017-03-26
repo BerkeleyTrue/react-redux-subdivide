@@ -7,7 +7,8 @@ import reducer, {
   splitTypes,
   split,
   join,
-  dividerMoved
+  dividerMoved,
+  windowResize
 } from '../src/reducers';
 
 test('split right', (t) => {
@@ -385,5 +386,19 @@ test('divider moved', t => {
     endState.panesById[2].splitRatio,
     0.8,
     'before pane split ratio did not update'
+  );
+});
+
+test('update size on windows', t => {
+  const endState = reducer(createLayout(), windowResize(1440, 600));
+  t.is(
+    endState.width,
+    1440,
+    'layout width did not update'
+  );
+  t.is(
+    endState.height,
+    600,
+    'layout height did not update'
   );
 });
