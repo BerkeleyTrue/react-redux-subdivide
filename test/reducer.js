@@ -5,9 +5,12 @@ import reducer, {
   createPane,
   directions,
   splitTypes,
-  split,
-  join,
+
   dividerMoved,
+  hoverOverCorner,
+  join,
+  split,
+  unhover,
   windowResize
 } from '../src/reducers';
 
@@ -400,5 +403,36 @@ test('update size on windows', t => {
     endState.height,
     600,
     'layout height did not update'
+  );
+});
+
+test('hoverOverCorner', t => {
+  const endState = reducer(
+    createLayout(),
+    hoverOverCorner({ id: '1n2' })
+  );
+
+  t.truthy(
+    endState.cornerHover,
+    'cornerHover should exist'
+  );
+  t.is(
+    endState.cornerHover.id,
+    '1n2',
+    'hoverOverCorner does not update cornerHover'
+  );
+});
+
+test('unhover', t => {
+  const endState = reducer(
+    createLayout({
+      cornerHover: { id: '1n2' }
+    }),
+    unhover()
+  );
+
+  t.falsy(
+    endState.cornerHover,
+    'unhover did not remove cornerHover'
   );
 });

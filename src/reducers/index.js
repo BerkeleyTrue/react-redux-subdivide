@@ -40,7 +40,6 @@ export const types = createTypes([
   'join',
   'split',
 
-  'CORNER_DOWN',
   'ADD_CHILD_PANE',
   'REMOVE_CHILD_PANE',
   'REMOVE_PARENT_PANE',
@@ -49,9 +48,11 @@ export const types = createTypes([
   'windowResize',
   'SET_BLOCK',
   'SET_DIVIDER_DOWN',
-  'SET_CORNER_DOWN',
   'SET_PANE_PROPS',
-  'SET_CORNER_HOVER'
+
+  'cornerPressed',
+  'hoverOverCorner',
+  'unhover'
 ], ns);
 
 export const createPane = (values = {}) => ({
@@ -121,9 +122,11 @@ export const windowResize = createAction(
   types.windowResize,
   (width, height) => ({ width, height })
 );
+
 export const setBlock = createAction(types.SET_BLOCK);
-export const setCornerHover = createAction(types.SET_CORNER_HOVER);
-export const setCornerDown = createAction(types.SET_CORNER_DOWN);
+export const hoverOverCorner = createAction(types.hoverOverCorner);
+export const unhover = createAction(types.unhover);
+export const cornerPressed = createAction(types.cornerPressed);
 export const setDividerDown = createAction(types.SET_DIVIDER_DOWN);
 
 function getOffset(splitType) {
@@ -404,17 +407,24 @@ const firstPass = handleActions({
     };
   },
 
-  [types.SET_CORNER_DOWN]: (state, { payload: { cornerDown } }) => {
+  [types.cornerPressed]: (state, { payload: { cornerDown } }) => {
     return {
       ...state,
       cornerDown
     };
   },
 
-  [types.SET_CORNER_HOVER]: (state, { payload: { cornerHover } }) => {
+  [types.hoverOverCorner]: (state, { payload }) => {
     return {
       ...state,
-      cornerHover
+      cornerHover: payload
+    };
+  },
+
+  [types.unhover]: (state) => {
+    return {
+      ...state,
+      cornerHover: null
     };
   },
 

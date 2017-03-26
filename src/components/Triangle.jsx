@@ -1,31 +1,45 @@
-import React, { Component } from 'react';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
-import { cardinals } from '../reducers';
+import {
+  cardinals,
 
-export default class Triangle extends Component {
+  cornerPressed,
+  hoverOverCorner,
+  unhover
+} from '../reducers';
+
+const propTypes = {
+  cornerPressed: PropTypes.func,
+  hoverOverCorner: PropTypes.func,
+  unhover: PropTypes.func
+};
+
+const mapStateToProps = null;
+const mapDispatchToProps = {
+  cornerPressed,
+  hoverOverCorner,
+  unhover
+};
+
+export class Corner extends Component {
   constructor(...props) {
     super(...props);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseEnter = this.onMouseEnter.bind(this);
-    this.onMouseLeave = this.onMouseLeave.bind(this);
   }
 
   onMouseDown() {
-    const { actions, corner, pane } = this.props;
-    actions.setCornerDown({ ...pane, corner });
+    const { cornerPressed, corner, pane } = this.props;
+    cornerPressed({ ...pane, corner });
   }
 
   onMouseEnter() {
-    const { actions, corner, pane } = this.props;
-    actions.setCornerHover({
+    const { hoverOverCorner, corner, pane } = this.props;
+    hoverOverCorner({
       paneId: pane.id,
       corner
     });
-  }
-
-  onMouseLeave() {
-    const { actions } = this.props;
-    actions.setCornerHover();
   }
 
   getStyles() {
@@ -102,7 +116,7 @@ export default class Triangle extends Component {
         key='outer'
         onMouseDown={ this.onMouseDown }
         onMouseEnter={ this.onMouseEnter }
-        onMouseLeave={ this.onMouseLeave }
+        onMouseLeave={ this.props.unhover}
         style={ styles.outer }
         >
         <div style={ styles.inner } />
@@ -110,3 +124,11 @@ export default class Triangle extends Component {
     );
   }
 }
+
+Corner.propTypes = propTypes;
+Corner.displayName = 'Corner';
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Corner);
