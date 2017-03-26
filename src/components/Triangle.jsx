@@ -6,20 +6,20 @@ import {
 
   cornerPressed,
   hoverOverCorner,
-  unhover
+  blurCorner
 } from '../reducers';
 
 const propTypes = {
+  blurCorner: PropTypes.func,
   cornerPressed: PropTypes.func,
-  hoverOverCorner: PropTypes.func,
-  unhover: PropTypes.func
+  hoverOverCorner: PropTypes.func
 };
 
 const mapStateToProps = null;
 const mapDispatchToProps = {
+  blurCorner,
   cornerPressed,
-  hoverOverCorner,
-  unhover
+  hoverOverCorner
 };
 
 export class Corner extends Component {
@@ -116,7 +116,7 @@ export class Corner extends Component {
         key='outer'
         onMouseDown={ this.onMouseDown }
         onMouseEnter={ this.onMouseEnter }
-        onMouseLeave={ this.props.unhover}
+        onMouseLeave={ this.props.blurCorner }
         style={ styles.outer }
         >
         <div style={ styles.inner } />

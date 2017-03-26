@@ -1,5 +1,6 @@
 import {
   createAction,
+  combineActions,
   handleActions
 } from 'redux-actions';
 import { createTypes } from 'redux-create-types';
@@ -44,15 +45,18 @@ export const types = createTypes([
   'REMOVE_CHILD_PANE',
   'REMOVE_PARENT_PANE',
 
+  'dividerPressed',
   'dividerMoved',
+  'dividerReleased',
+
   'windowResize',
   'SET_BLOCK',
-  'SET_DIVIDER_DOWN',
   'SET_PANE_PROPS',
 
   'cornerPressed',
+  'cornerReleased',
   'hoverOverCorner',
-  'unhover'
+  'blurCorner'
 ], ns);
 
 export const createPane = (values = {}) => ({
@@ -109,6 +113,8 @@ export const split = createAction(
   })
 );
 
+export const dividerPressed = createAction(types.dividerPressed);
+export const dividerReleased = createAction(types.dividerReleased);
 export const dividerMoved = createAction(
   types.dividerMoved,
   (afterPaneId, beforePaneId, afterRatio, beforeRatio) => ({
@@ -118,6 +124,7 @@ export const dividerMoved = createAction(
     beforeRatio
   })
 );
+
 export const windowResize = createAction(
   types.windowResize,
   (width, height) => ({ width, height })
@@ -125,9 +132,9 @@ export const windowResize = createAction(
 
 export const setBlock = createAction(types.SET_BLOCK);
 export const hoverOverCorner = createAction(types.hoverOverCorner);
-export const unhover = createAction(types.unhover);
+export const blurCorner = createAction(types.blurCorner);
 export const cornerPressed = createAction(types.cornerPressed);
-export const setDividerDown = createAction(types.SET_DIVIDER_DOWN);
+export const cornerReleased = createAction(types.cornerReleased);
 
 function getOffset(splitType) {
   if (
@@ -380,6 +387,14 @@ const firstPass = handleActions({
     };
   },
 
+  [combineActions(types.dividerPressed, types.dividerReleased)]:
+    (state, { payload }) => {
+      return {
+        ...state,
+        dividerDown: payload
+      };
+    },
+
   [types.dividerMoved]: (state, { payload }) => {
     const { afterPaneId, afterRatio, beforePaneId, beforeRatio } = payload;
     const { panesById } = state;
@@ -407,33 +422,22 @@ const firstPass = handleActions({
     };
   },
 
-  [types.cornerPressed]: (state, { payload: { cornerDown } }) => {
-    return {
-      ...state,
-      cornerDown
-    };
-  },
+  [combineActions(types.cornerPressed, types.cornerReleased)]:
+    (state, { payload }) => {
+      return {
+        ...state,
+        cornerDown: payload
+      };
+    },
 
-  [types.hoverOverCorner]: (state, { payload }) => {
-    return {
-      ...state,
-      cornerHover: payload
-    };
-  },
+  [combineActions(types.hoverOverCorner, types.blurCorner)]:
+    (state, { payload }) => {
+      return {
+        ...state,
+        cornerHover: payload
+      };
+    }
 
-  [types.unhover]: (state) => {
-    return {
-      ...state,
-      cornerHover: null
-    };
-  },
-
-  [types.SET_DIVIDER_DOWN]: (state, { payload: { divider } }) => {
-    return {
-      ...state,
-      dividerDown: divider
-    };
-  }
 }, createLayout());
 
 export default function reducer(state, action) {

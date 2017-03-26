@@ -1,18 +1,44 @@
 import test from 'ava';
 
 import reducer, {
+  ns,
+
+  cardinals,
   createLayout,
   createPane,
   directions,
   splitTypes,
 
-  dividerMoved,
+  cornerPressed,
+  cornerReleased,
+  blurCorner,
   hoverOverCorner,
+
+  dividerPressed,
+  dividerReleased,
+  dividerMoved,
   join,
   split,
-  unhover,
   windowResize
 } from '../src/reducers';
+
+test('reducer should stringify to subdivide ns', t => {
+  const actual = reducer + '';
+  t.is(
+    ns,
+    actual
+  );
+});
+
+test('state should not change for unrelated actions', t => {
+  const startState = createLayout();
+  const actual = reducer(startState, { type: 'FOO' });
+  t.is(
+    startState,
+    actual,
+    'state should not change with unrelated actions'
+  );
+});
 
 test('split right', (t) => {
   const endState = reducer(
@@ -409,7 +435,7 @@ test('update size on windows', t => {
 test('hoverOverCorner', t => {
   const endState = reducer(
     createLayout(),
-    hoverOverCorner({ id: '1n2' })
+    hoverOverCorner({ paneId: 0, corner: cardinals.ne })
   );
 
   t.truthy(
@@ -417,22 +443,92 @@ test('hoverOverCorner', t => {
     'cornerHover should exist'
   );
   t.is(
-    endState.cornerHover.id,
-    '1n2',
-    'hoverOverCorner does not update cornerHover'
+    endState.cornerHover.paneId,
+    0,
+    'hoverOverCorner should have pane id'
+  );
+  t.is(
+    endState.cornerHover.corner,
+    cardinals.ne,
+    'corner hover should have a cardinal'
   );
 });
 
-test('unhover', t => {
+test('blurCorner', t => {
   const endState = reducer(
     createLayout({
-      cornerHover: { id: '1n2' }
+      cornerHover: { paneId: 0, corner: cardinals.ne }
     }),
-    unhover()
+    blurCorner()
   );
 
   t.falsy(
     endState.cornerHover,
-    'unhover did not remove cornerHover'
+    'blurCorner did not remove cornerHover'
+  );
+});
+
+test('cornerPressed', t => {
+  const endState = reducer(
+    createLayout(),
+    cornerPressed({ paneId: 4, corner: cardinals.sw })
+  );
+  t.truthy(
+    endState.cornerDown,
+    'corner should be down'
+  );
+  t.is(
+    endState.cornerDown.paneId,
+    4,
+    'corner down should have a pane id'
+  );
+  t.is(
+    endState.cornerDown.corner,
+    cardinals.sw,
+    'corner down should have a cardinal'
+  );
+});
+
+test('cornerReleased', t => {
+  const endState = reducer(
+    createLayout({
+      cornerDown: { paneId: 4, corner: cardinals.sw }
+    }),
+    cornerReleased()
+  );
+  t.falsy(
+    endState.cornerDown,
+    'corner down should be undefined'
+  );
+});
+
+test('dividerPressed', t => {
+  const endState = reducer(
+    createLayout(),
+    dividerPressed({ id: '1n2' })
+  );
+
+  t.truthy(
+    endState.dividerDown,
+    'divider should be set'
+  );
+  t.is(
+    endState.dividerDown.id,
+    '1n2',
+    'divider down should have the right id'
+  );
+});
+
+test('dividerReleased', t => {
+  const endState = reducer(
+    createLayout({
+      dividerDown: { id: '1n2' }
+    }),
+    dividerReleased()
+  );
+
+  t.falsy(
+    endState.dividerDown,
+    'divider should be undefined'
   );
 });

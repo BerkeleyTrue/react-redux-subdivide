@@ -9,8 +9,8 @@ import {
   downDividerSelector,
   splitTypes,
 
-  setCornerDown,
-  setDividerDown,
+  cornerReleased,
+  dividerReleased,
   dividerMoved,
   split,
   windowResize
@@ -19,8 +19,8 @@ import {
 const minRatioChange = 20;
 const mapStateToProps = null;
 const mapDispatchToProps = {
-  setCornerDown,
-  setDividerDown,
+  cornerReleased,
+  dividerReleased,
   dividerMoved,
   split,
   windowResize
@@ -28,8 +28,8 @@ const mapDispatchToProps = {
 
 const propTypes = {
   DefaultComponent: PropTypes.element,
-  setCornerDown: PropTypes.func,
-  setDividerDown: PropTypes.func,
+  cornerReleased: PropTypes.func,
+  dividerReleased: PropTypes.func,
   dividerMoved: PropTypes.func,
   split: PropTypes.func,
   windowResize: PropTypes.func
@@ -39,8 +39,8 @@ export class Layout extends Component {
   constructor(props, ...args) {
     super(props, ...args);
     const {
-      setCornerDown,
-      setDividerDown,
+      cornerReleased,
+      dividerReleased,
       dividerMoved,
       split,
       windowResize
@@ -121,12 +121,12 @@ export class Layout extends Component {
     this.onMouseUp = () => {
       const { subdivide } = this.props;
       if (subdivide.dividerDown) {
-        setDividerDown();
+        dividerReleased();
       }
       // give pane onMouseUp a chance to fire
       setTimeout(()=>{
         if (subdivide.cornerDown) {
-          setCornerDown();
+          cornerReleased();
         }
       }, 10);
     };
