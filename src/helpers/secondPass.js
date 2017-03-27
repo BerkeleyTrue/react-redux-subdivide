@@ -24,10 +24,12 @@ function getJoinDirection(
   const beforeId = index < 1 ? null : siblings[index - 1];
   const afterId = siblings[index + 1];
 
-  const isBeforeGroup = beforeId !== null &&
-    panesById[beforeId].isGroup;
-  const isAfterGroup = afterId !== null &&
-    panesById[afterId].isGroup;
+  const isBeforeGroup = panesById[beforeId] ?
+    panesById[beforeId].isGroup :
+    null;
+  const isAfterGroup = panesById[afterId] ?
+    panesById[afterId].isGroup :
+    null;
 
   const canJoinBefore = beforeId === child.id && !isBeforeGroup;
   const canJoinAfter = afterId === child.id && !isAfterGroup;
