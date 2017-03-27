@@ -28,7 +28,6 @@ app.use(compression({
 }))
 
 app.use('/', express.static('.'))
-app.use('/components/', express.static('./docs/build'))
 
 // app.all('*', function(req, res, next) {
 //   let url = require('url').parse(req.url)
