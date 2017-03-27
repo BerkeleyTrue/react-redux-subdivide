@@ -315,16 +315,16 @@ const firstPass = handleActions({
     const retain = { ...panesById[retainId] };
     const parent = panesById[retain.parentId];
     let rootId = state.rootId;
+    if (remove.id === rootId) {
+      // attempted to remove root pane
+      return state;
+    }
     if (remove.isGroup) {
-      console.warn('cannot replace group');
+      // cannot remove a parent
       return state;
     }
     if (areNotAdjacent(parent, remove, retain)) {
-      console.warn('pane must be adjacent to join');
-      return state;
-    }
-    if (!parent) {
-      console.warn('attempted to remove root pane!');
+      // pane must be adjacent to join
       return state;
     }
     // splice pane out of parents childIds

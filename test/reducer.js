@@ -209,6 +209,147 @@ test('split pane in same direction', t => {
   );
 });
 
+test('join pane into root should not change state', t => {
+  const startState = createLayout({
+    rootId: 1,
+    panes: [ 0, 1, 2 ],
+    panesById: {
+      0: createPane({
+        id: 0,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.33
+      }),
+      1: createPane({
+        id: 1,
+        childIds: [ 0, 2 ],
+        isGroup: true,
+        direction: directions.row,
+        parentId: null,
+        splitRatio: 1
+      }),
+      2: createPane({
+        id: 2,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.33
+      })
+    }
+  });
+  const endState = reducer(startState, join(0, 1));
+  t.is(
+    startState,
+    endState
+  );
+});
+
+test('join pane into group should not change state', t => {
+  const startState = createLayout({
+    rootId: 1,
+    panesById: {
+      0: createPane({
+        id: 0,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.25
+      }),
+      1: createPane({
+        id: 1,
+        childIds: [ 0, 2 ],
+        isGroup: true,
+        direction: directions.row,
+        parentId: null,
+        splitRatio: 1
+      }),
+      2: createPane({
+        id: 2,
+        childIds: [ 3, 4 ],
+        isGroup: true,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.75
+      }),
+      3: createPane({
+        id: 3,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 2,
+        splitRatio: 0.75
+      }),
+      4: createPane({
+        id: 4,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 2,
+        splitRatio: 0.75
+      })
+    }
+  });
+  const endState = reducer(
+    startState,
+    join(3, 2)
+  );
+  t.is(
+    startState,
+    endState
+  );
+});
+
+test('join non-adacent panes should not change state', t => {
+  const startState = createLayout({
+    rootId: 1,
+    panesById: {
+      0: createPane({
+        id: 0,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.33
+      }),
+      1: createPane({
+        id: 1,
+        childIds: [ 0, 2, 3 ],
+        isGroup: true,
+        direction: directions.row,
+        parentId: null,
+        splitRatio: 1
+      }),
+      2: createPane({
+        id: 2,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.33
+      }),
+      3: createPane({
+        id: 3,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.33
+      })
+    }
+  });
+  const endState = reducer(startState, join(0, 3));
+
+  t.is(
+    startState,
+    endState,
+    'joining non-adjacent panes should not change state'
+  );
+});
+
 test('join one of two in row below root', (t) => {
   const startState = createLayout({
     rootId: 1,
