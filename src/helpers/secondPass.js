@@ -6,20 +6,20 @@ import {
 
 function getJoinDirection(
   panesById,
- { id: cornerId, corner } = {},
+ { paneId, corner } = {},
   child
 ) {
-  if (!cornerId) {
-    return false;
+  if (!paneId && paneId !== 0) {
+    return null;
   }
-  const cornerDownPane = panesById[cornerId];
+  const cornerDownPane = panesById[paneId];
   const parent = panesById[cornerDownPane.parentId];
   if (!parent) {
-    return false;
+    return null;
   }
   const siblings = parent.childIds;
   const direction = parent.direction;
-  const index = siblings.indexOf(cornerId);
+  const index = siblings.indexOf(paneId);
 
   const beforeId = index < 1 ? null : siblings[index - 1];
   const afterId = siblings[index + 1];
@@ -96,7 +96,7 @@ export default function secondPass(state) {
 
     parent.childIds.forEach((childId, i) => {
       const child = { ...panesById[childId] };
-      let canSplit = cornerDown && cornerDown.id === childId;
+      let canSplit = cornerDown && cornerDown.paneId === childId;
       let joinDirection = getJoinDirection(panesById, cornerDown, child);
 
       child.canSplit = canSplit;
