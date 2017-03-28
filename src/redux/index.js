@@ -5,7 +5,14 @@ import {
 } from 'redux-actions';
 import { createTypes } from 'redux-create-types';
 
-import normalize from '../utils/normalize';
+import normalize from '../utils/normalize.js';
+import {
+  getSplitDirection,
+  getOffset,
+  areNotAdjacent,
+  getNextId,
+  getSplitRatios
+} from '../utils/redux.js';
 
 export const ns = 'subdivide';
 
@@ -44,22 +51,6 @@ export const types = createTypes([
   'blurCorner'
 ], ns);
 
-function getSplitDirection(splitType) {
-  if (
-    splitType === directions.up ||
-    splitType === directions.down
-  ) {
-    return splitTypes.vertical;
-  }
-  if (
-    splitType === directions.left ||
-    splitType === directions.right
-  ) {
-    return splitTypes.horizontal;
-  }
-  return null;
-}
-
 export const join = createAction(
   types.join,
   (retainId, removeId) => ({ retainId, removeId })
@@ -95,62 +86,6 @@ export const hoverOverCorner = createAction(types.hoverOverCorner);
 export const blurCorner = createAction(types.blurCorner);
 export const cornerPressed = createAction(types.cornerPressed);
 export const cornerReleased = createAction(types.cornerReleased);
-
-function getOffset(splitType) {
-  if (
-    splitType === directions.up ||
-    splitType === directions.left
-  ) {
-    return 0;
-  }
-  if (
-    splitType === directions.down ||
-    splitType === directions.right
-  ) {
-    return 1;
-  }
-  return null;
-}
-
-function areNotAdjacent({ childIds }, { id: removeId }, { id: retainId }) {
-  const removePos = childIds.indexOf(removeId);
-  const retainPos = childIds.indexOf(retainId);
-  return (
-    removePos === -1 ||
-    retainPos === -1 ||
-    !(
-      removePos + 1 === retainPos ||
-      removePos - 1 === retainPos
-    )
-  );
-}
-
-function getNextId(panes = [ 0 ]) {
-  const id = panes[ panes.length - 1 ];
-  return id + 1;
-}
-
-function getRatio(
-  startX,
-  startY,
-  offset,
-  direction,
-  hasNewParent,
-  { width, height, left, top, splitRatio }
-) {
-  let ratio = direction === splitTypes.horizontal ?
-    (startX - left) / width :
-    (startY - top) / height;
-
-  let ratioA = ratio = offset ? ratio : 1 - ratio;
-  let ratioB = 1 - ratioA;
-
-  if (hasNewParent) {
-    ratioA *= splitRatio;
-    ratioB *= splitRatio;
-  }
-  return [ ratioA, ratioB ];
-}
 
 export const createInitialState =
   (...args) => normalize(createLayout(...args));
@@ -249,7 +184,7 @@ const _reducer = handleActions({
     const childIds = [ ...currentParent.childIds ];
     const currentPaneIndex = childIds.indexOf(id);
 
-    const [ ratioA, ratioB ] = getRatio(
+    const [ ratioA, ratioB ] = getSplitRatios(
       startX,
       startY,
       direction,
