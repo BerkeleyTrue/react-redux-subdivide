@@ -71,7 +71,7 @@ function getJoinDirection(
   return null;
 }
 
-export default function secondPass(state) {
+export default function normalize(state) {
   const { rootId, width, height, cellSpacing, cornerDown } = state;
   const panesById = { ...state.panesById };
   let dividers = {};

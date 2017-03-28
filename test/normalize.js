@@ -1,5 +1,5 @@
 import test from 'ava';
-import secondPass from '../src/helpers/secondPass.js';
+import normalize from '../src/utils/normalize.js';
 
 import {
   corners,
@@ -43,7 +43,7 @@ test('root should not have join direction', t => {
       })
     }
   });
-  const end = secondPass(start);
+  const end = normalize(start);
   t.falsy(
     end.panesById[0].joinDirection,
     'second pass should not add direction to group'
@@ -81,7 +81,7 @@ test('creates a divider for children', t => {
       })
     }
   });
-  const end = secondPass(start);
+  const end = normalize(start);
   t.is(
     Object.keys(end.dividers).length,
     1,
@@ -129,7 +129,7 @@ test('NE corner join left vertical', t => {
       })
     }
   });
-  const end = secondPass(start);
+  const end = normalize(start);
   t.truthy(
     end.panesById[2].canSplit,
     'second pass should add can split to panes with corners pressed'
@@ -177,7 +177,7 @@ test('NE corner join right horizontal', t => {
       })
     }
   });
-  const end = secondPass(start);
+  const end = normalize(start);
   t.truthy(
     end.panesById[0].canSplit,
     'second pass should add can split to panes with corners pressed'
@@ -224,7 +224,7 @@ test('north-west corner join vertical', t => {
       })
     }
   });
-  const end = secondPass(start);
+  const end = normalize(start);
   t.truthy(
     end.panesById[2].canSplit,
     'second pass should add can split to panes with corners pressed'
@@ -272,7 +272,7 @@ test('north-west corner join horizontal', t => {
       })
     }
   });
-  const end = secondPass(start);
+  const end = normalize(start);
   t.truthy(
     end.panesById[2].canSplit,
     'second pass should add can split to panes with corners pressed'
@@ -319,7 +319,7 @@ test('south-west corner join vertical', t => {
       })
     }
   });
-  const end = secondPass(start);
+  const end = normalize(start);
   t.truthy(
     end.panesById[0].canSplit,
     'second pass should add can split to panes with corners pressed'
@@ -367,7 +367,7 @@ test('south-west corner join horizontal', t => {
       })
     }
   });
-  const end = secondPass(start);
+  const end = normalize(start);
   t.truthy(
     end.panesById[2].canSplit,
     'second pass should add can split to panes with corners pressed'
@@ -415,7 +415,7 @@ test('south-east corner join vertical', t => {
       })
     }
   });
-  const end = secondPass(start);
+  const end = normalize(start);
   t.truthy(
     end.panesById[0].canSplit,
     'second pass should add can split to panes with corners pressed'
@@ -463,7 +463,7 @@ test('south-east corner join horizontal', t => {
       })
     }
   });
-  const end = secondPass(start);
+  const end = normalize(start);
   t.truthy(
     end.panesById[0].canSplit,
     'second pass should add can split to panes with corners pressed'

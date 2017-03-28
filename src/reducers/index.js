@@ -5,7 +5,7 @@ import {
 } from 'redux-actions';
 import { createTypes } from 'redux-create-types';
 
-import secondPass from '../helpers/secondPass';
+import normalize from '../utils/normalize';
 
 export const ns = 'subdivide';
 
@@ -160,7 +160,7 @@ function getRatio(
 }
 
 export const createInitialState =
-  (...args) => secondPass(createLayout(...args));
+  (...args) => normalize(createLayout(...args));
 
 export const createPane = (values = {}) => ({
   id: 0,
@@ -197,7 +197,7 @@ export function downDividerSelector(state) {
   };
 }
 
-const firstPass = handleActions({
+const _reducer = handleActions({
   // creates a new pane group, puts the existing and the newly created pane
   // as children of that group pane
   // so if we start with a 0 root pane and split it, we create a group
@@ -436,11 +436,11 @@ const firstPass = handleActions({
 }, createInitialState());
 
 export default function reducer(state, action) {
-  const newState = firstPass(state, action);
+  const newState = _reducer(state, action);
   if (newState === state) {
     return state;
   }
-  return secondPass(newState);
+  return normalize(newState);
 }
 
 reducer.toString = () => ns;
