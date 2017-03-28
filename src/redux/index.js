@@ -114,13 +114,16 @@ export const createLayout = (values = {}) => ({
   ...values
 });
 
+export function getNSState(state) {
+  return state[ns];
+}
 export function downDividerSelector(state) {
-  const { dividerDown } = state;
+  const { dividerDown } = getNSState(state);
   if (!dividerDown) {
     return null;
   }
   return {
-    ...state.dividers[dividerDown.id],
+    ...getNSState(state).dividers[dividerDown.id],
     ...dividerDown
   };
 }
