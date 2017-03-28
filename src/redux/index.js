@@ -32,17 +32,11 @@ export const types = createTypes([
   'join',
   'split',
 
-  'ADD_CHILD_PANE',
-  'REMOVE_CHILD_PANE',
-  'REMOVE_PARENT_PANE',
-
   'dividerPressed',
   'dividerMoved',
   'dividerReleased',
 
   'windowResize',
-  'SET_BLOCK',
-  'SET_PANE_PROPS',
 
   'cornerPressed',
   'cornerReleased',
@@ -97,7 +91,6 @@ export const windowResize = createAction(
   (width, height) => ({ width, height })
 );
 
-export const setBlock = createAction(types.SET_BLOCK);
 export const hoverOverCorner = createAction(types.hoverOverCorner);
 export const blurCorner = createAction(types.blurCorner);
 export const cornerPressed = createAction(types.cornerPressed);
