@@ -7,7 +7,7 @@ import {
   createPane,
   directions,
   splitTypes
-} from '../src/reducers';
+} from '../src/redux';
 
 test('root should not have join direction', t => {
   const start = createInitialState({

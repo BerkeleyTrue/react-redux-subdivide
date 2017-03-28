@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { splitTypes } from '../reducers';
+import { splitTypes } from '../redux';
 
 export default class Divider extends Component {
   constructor(props, context) {

@@ -2,7 +2,7 @@ import {
   corners,
   directions,
   splitTypes
-} from '../reducers';
+} from '../redux';
 
 function getJoinDirection(
   panesById,

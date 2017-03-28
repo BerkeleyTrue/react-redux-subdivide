@@ -3,7 +3,7 @@ import {
   corners,
   directions,
   splitTypes
-} from '../reducers';
+} from '../redux';
 
 export default class CornerOverlay extends Component {
 

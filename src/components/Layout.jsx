@@ -14,7 +14,7 @@ import {
   dividerMoved,
   split,
   windowResize
-} from '../reducers';
+} from '../redux';
 
 const minRatioChange = 20;
 const mapStateToProps = null;

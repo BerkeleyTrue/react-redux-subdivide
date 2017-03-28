@@ -20,7 +20,7 @@ import reducer, {
   join,
   split,
   windowResize
-} from '../src/reducers';
+} from '../src/redux';
 
 test('reducer should stringify to subdivide ns', t => {
   const actual = reducer + '';

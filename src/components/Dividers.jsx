@@ -1,5 +1,5 @@
 import React from 'react';
-import { splitTypes } from '../reducers';
+import { splitTypes } from '../redux';
 import DividerTouch from './DividerTouch.jsx';
 
 let Rect = (props) => {

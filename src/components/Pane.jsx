@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Triangle from './Triangle.jsx';
 import CornerOverlay from './CornerOverlay.jsx';
 
-import { corners } from '../reducers';
+import { corners } from '../redux';
 
 function getStyles({
   width,

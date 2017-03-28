@@ -7,7 +7,7 @@ import {
   cornerPressed,
   hoverOverCorner,
   blurCorner
-} from '../reducers';
+} from '../redux';
 
 const propTypes = {
   blurCorner: PropTypes.func,
