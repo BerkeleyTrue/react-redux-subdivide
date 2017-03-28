@@ -77,7 +77,7 @@ export default function secondPass(state) {
   let dividers = {};
   const left = 0;
   const top = 0;
-  const rootPane = {
+  const rootPane = panesById[rootId] = {
     ...panesById[rootId],
     width,
     height,

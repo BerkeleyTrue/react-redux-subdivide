@@ -50,30 +50,6 @@ export const types = createTypes([
   'blurCorner'
 ], ns);
 
-export const createPane = (values = {}) => ({
-  id: 0,
-  childIds: [],
-  isGroup: false,
-  splitRatio: 1,
-  props: {},
-  ...values
-});
-
-export const createLayout = (values = {}) => ({
-  rootId: 0,
-  borderSize: 1,
-  cellSpacing: 3,
-  touchMargin: 2,
-  width: 800,
-  height: 600,
-  panesById: {
-    0: createPane()
-  },
-  panes: [ 0 ],
-  dividers: {},
-  ...values
-});
-
 function getSplitDirection(splitType) {
   if (
     splitType === directions.up ||
@@ -96,7 +72,7 @@ export const join = createAction(
 );
 export const split = createAction(
   types.split,
-  (id, splitType, startX = 0, startY = 0) => ({
+  (id, splitType, startX = 10, startY = 10) => ({
     id,
     splitType,
     startX,
@@ -183,6 +159,33 @@ function getRatio(
   return [ ratioA, ratioB ];
 }
 
+export const createInitialState =
+  (...args) => secondPass(createLayout(...args));
+
+export const createPane = (values = {}) => ({
+  id: 0,
+  childIds: [],
+  isGroup: false,
+  splitRatio: 1,
+  props: {},
+  ...values
+});
+
+export const createLayout = (values = {}) => ({
+  rootId: 0,
+  borderSize: 1,
+  cellSpacing: 3,
+  touchMargin: 2,
+  width: 800,
+  height: 600,
+  panesById: {
+    0: createPane()
+  },
+  panes: [ 0 ],
+  dividers: {},
+  ...values
+});
+
 export function downDividerSelector(state) {
   const { dividerDown } = state;
   if (!dividerDown) {
@@ -258,6 +261,7 @@ const firstPass = handleActions({
       startY,
       direction,
       offset,
+      // has new parent ?
       currentParent.id === oldParentId,
       currentPane
     );
@@ -429,7 +433,7 @@ const firstPass = handleActions({
       };
     }
 
-}, createLayout());
+}, createInitialState());
 
 export default function reducer(state, action) {
   const newState = firstPass(state, action);

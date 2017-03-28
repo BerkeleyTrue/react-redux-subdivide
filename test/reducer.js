@@ -4,7 +4,7 @@ import reducer, {
   ns,
 
   corners,
-  createLayout,
+  createInitialState,
   createPane,
   directions,
   splitTypes,
@@ -31,7 +31,7 @@ test('reducer should stringify to subdivide ns', t => {
 });
 
 test('state should not change for unrelated actions', t => {
-  const startState = createLayout();
+  const startState = createInitialState();
   const actual = reducer(startState, { type: 'FOO' });
   t.is(
     startState,
@@ -42,7 +42,7 @@ test('state should not change for unrelated actions', t => {
 
 test('split right', (t) => {
   const endState = reducer(
-    createLayout(),
+    createInitialState(),
     split(0, directions.right)
   );
 
@@ -60,7 +60,7 @@ test('split right', (t) => {
 });
 
 test('split left', (t) => {
-  const endState = reducer(createLayout(), split(0, directions.left));
+  const endState = reducer(createInitialState(), split(0, directions.left));
   const original = endState.panesById[0];
   const parent = endState.panesById[original.parentId];
   const added = endState.panesById[parent.childIds[0]];
@@ -71,7 +71,7 @@ test('split left', (t) => {
 
 test('split above', (t) => {
   const endState = reducer(
-    createLayout(),
+    createInitialState(),
     split(0, directions.up)
   );
   const original = endState.panesById[0];
@@ -84,7 +84,7 @@ test('split above', (t) => {
 
 test('split below', (t) => {
   const endState = reducer(
-    createLayout(),
+    createInitialState(),
     split(0, directions.down)
   );
   const original = endState.panesById[0];
@@ -97,7 +97,7 @@ test('split below', (t) => {
 });
 
 test('split non-root into two', t => {
-  const startState = createLayout({
+  const startState = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2, 3 ],
     panesById: {
@@ -156,7 +156,7 @@ test('split non-root into two', t => {
 });
 
 test('split pane in same direction', t => {
-  const startState = createLayout({
+  const startState = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
     panesById: {
@@ -209,8 +209,35 @@ test('split pane in same direction', t => {
   );
 });
 
+test('split horizontal ratio', t => {
+  const startState = createInitialState();
+  const endState = reducer(startState, split(0, directions.right));
+  const oldPane = endState.panesById[0];
+  const newPane = endState.panesById[2];
+  t.truthy(
+    newPane,
+    'split created new pane'
+  );
+  t.truthy(
+    oldPane,
+    'split left old pane'
+  );
+
+  t.is(
+    oldPane.splitRatio && typeof oldPane.splitRatio,
+    'number',
+    'split should set a number as ratio for old pane'
+  );
+
+  t.is(
+    newPane.splitRatio && typeof newPane.splitRatio,
+    'number',
+    'split should set a number as ratio for new pane'
+  );
+});
+
 test('join pane into root should not change state', t => {
-  const startState = createLayout({
+  const startState = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
     panesById: {
@@ -248,7 +275,7 @@ test('join pane into root should not change state', t => {
 });
 
 test('join pane into group should not change state', t => {
-  const startState = createLayout({
+  const startState = createInitialState({
     rootId: 1,
     panesById: {
       0: createPane({
@@ -304,7 +331,7 @@ test('join pane into group should not change state', t => {
 });
 
 test('join non-adacent panes should not change state', t => {
-  const startState = createLayout({
+  const startState = createInitialState({
     rootId: 1,
     panesById: {
       0: createPane({
@@ -351,7 +378,7 @@ test('join non-adacent panes should not change state', t => {
 });
 
 test('join one of two in row below root', (t) => {
-  const startState = createLayout({
+  const startState = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
     panesById: {
@@ -393,7 +420,7 @@ test('join one of two in row below root', (t) => {
 
 
 test('join one of three in row below root', (t) => {
-  const startState = createLayout({
+  const startState = createInitialState({
     rootId: 1,
     panesById: {
       0: createPane({
@@ -443,7 +470,7 @@ test('join one of three in row below root', (t) => {
 });
 
 test('join one of two in row below root', (t) => {
-  const startState = createLayout({
+  const startState = createInitialState({
     rootId: 1,
     panesById: {
       0: createPane({
@@ -519,7 +546,7 @@ test('join one of two in row below root', (t) => {
 
 test('divider moved', t => {
   const endState = reducer(
-    createLayout({
+    createInitialState({
       panes: [ 0, 1, 3 ],
       panesById: {
         0: createPane({
@@ -560,7 +587,7 @@ test('divider moved', t => {
 });
 
 test('update size on windows', t => {
-  const endState = reducer(createLayout(), windowResize(1440, 600));
+  const endState = reducer(createInitialState(), windowResize(1440, 600));
   t.is(
     endState.width,
     1440,
@@ -575,7 +602,7 @@ test('update size on windows', t => {
 
 test('hoverOverCorner', t => {
   const endState = reducer(
-    createLayout(),
+    createInitialState(),
     hoverOverCorner({ paneId: 0, corner: corners.ne })
   );
 
@@ -597,7 +624,7 @@ test('hoverOverCorner', t => {
 
 test('blurCorner', t => {
   const endState = reducer(
-    createLayout({
+    createInitialState({
       cornerHover: { paneId: 0, corner: corners.ne }
     }),
     blurCorner()
@@ -611,7 +638,7 @@ test('blurCorner', t => {
 
 test('cornerPressed', t => {
   const endState = reducer(
-    createLayout(),
+    createInitialState(),
     cornerPressed({ paneId: 4, corner: corners.sw })
   );
   t.truthy(
@@ -632,7 +659,7 @@ test('cornerPressed', t => {
 
 test('cornerReleased', t => {
   const endState = reducer(
-    createLayout({
+    createInitialState({
       cornerDown: { paneId: 4, corner: corners.sw }
     }),
     cornerReleased()
@@ -645,7 +672,7 @@ test('cornerReleased', t => {
 
 test('dividerPressed', t => {
   const endState = reducer(
-    createLayout(),
+    createInitialState(),
     dividerPressed({ id: '1n2' })
   );
 
@@ -662,7 +689,7 @@ test('dividerPressed', t => {
 
 test('dividerReleased', t => {
   const endState = reducer(
-    createLayout({
+    createInitialState({
       dividerDown: { id: '1n2' }
     }),
     dividerReleased()

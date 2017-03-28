@@ -3,14 +3,14 @@ import secondPass from '../src/helpers/secondPass.js';
 
 import {
   corners,
-  createLayout,
+  createInitialState,
   createPane,
   directions,
   splitTypes
 } from '../src/reducers';
 
 test('root should not have join direction', t => {
-  const start = createLayout({
+  const start = createInitialState({
     rootId: 1,
     cornerDown: {
       paneId: 1,
@@ -51,7 +51,7 @@ test('root should not have join direction', t => {
 });
 
 test('creates a divider for children', t => {
-  const start = createLayout({
+  const start = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
     panesById: {
@@ -95,7 +95,7 @@ test('creates a divider for children', t => {
 });
 
 test('NE corner join left vertical', t => {
-  const start = createLayout({
+  const start = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
     cornerDown: {
@@ -143,7 +143,7 @@ test('NE corner join left vertical', t => {
 
 
 test('NE corner join right horizontal', t => {
-  const start = createLayout({
+  const start = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
     cornerDown: {
@@ -190,7 +190,7 @@ test('NE corner join right horizontal', t => {
 });
 
 test('north-west corner join vertical', t => {
-  const start = createLayout({
+  const start = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
     cornerDown: {
@@ -238,7 +238,7 @@ test('north-west corner join vertical', t => {
 
 
 test('north-west corner join horizontal', t => {
-  const start = createLayout({
+  const start = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
     cornerDown: {
@@ -285,7 +285,7 @@ test('north-west corner join horizontal', t => {
 });
 
 test('south-west corner join vertical', t => {
-  const start = createLayout({
+  const start = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
     cornerDown: {
@@ -333,7 +333,7 @@ test('south-west corner join vertical', t => {
 
 
 test('south-west corner join horizontal', t => {
-  const start = createLayout({
+  const start = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
     cornerDown: {
@@ -381,7 +381,7 @@ test('south-west corner join horizontal', t => {
 
 
 test('south-east corner join vertical', t => {
-  const start = createLayout({
+  const start = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
     cornerDown: {
@@ -429,7 +429,7 @@ test('south-east corner join vertical', t => {
 
 
 test('south-east corner join horizontal', t => {
-  const start = createLayout({
+  const start = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
     cornerDown: {
