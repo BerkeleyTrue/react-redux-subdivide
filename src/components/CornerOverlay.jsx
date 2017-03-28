@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import {
-  cardinals,
+  corners,
   directions,
-  joinTypes
+  splitTypes
 } from '../reducers';
 
 export default class CornerOverlay extends Component {
@@ -42,7 +42,7 @@ export default class CornerOverlay extends Component {
     ctx.clearRect(0, 0, width, height);
     ctx.beginPath();
     ctx.rect(0, 0, width, height);
-    if (corner === cardinals.sw) {
+    if (corner === corners.sw) {
       for (let x = 0; x < width; x += dashSpacing) {
         ctx.rect(x, height - offset - dashWidth, dashLength, dashWidth);
       }
@@ -50,7 +50,7 @@ export default class CornerOverlay extends Component {
       for (let y = 0; y < height; y += dashSpacing) {
         ctx.rect(offset, height - y - dashLength, dashWidth, dashLength);
       }
-    } else if (corner === cardinals.ne) {
+    } else if (corner === corners.ne) {
       for (let x = 0; x < width; x += dashSpacing) {
         ctx.rect(width - x - dashLength, offset, dashLength, dashWidth);
       }
@@ -58,7 +58,7 @@ export default class CornerOverlay extends Component {
       for (let y = 0; y < height; y += dashSpacing) {
         ctx.rect(width - offset - dashWidth, y, dashWidth, dashLength);
       }
-    } else if (corner === cardinals.nw) {
+    } else if (corner === corners.nw) {
       for (let x = 0; x < width; x += dashSpacing) {
         ctx.rect(x, offset, dashLength, dashWidth);
       }
@@ -66,7 +66,7 @@ export default class CornerOverlay extends Component {
       for (let y = 0; y < height; y += dashSpacing) {
         ctx.rect(offset, y, dashWidth, dashLength);
       }
-    } else if (corner === cardinals.se) {
+    } else if (corner === corners.se) {
       for (let x = 0; x < width; x += dashSpacing) {
         ctx.rect(
           width - x - dashLength,
@@ -110,7 +110,7 @@ export default class CornerOverlay extends Component {
     ctx.beginPath();
     ctx.moveTo(0, 0);
 
-    if (joinDirection === joinTypes.right) {
+    if (joinDirection === directions.right) {
       ctx.lineTo(width, 0);
       ctx.lineTo(width, height);
       ctx.lineTo(0, height);
@@ -123,7 +123,7 @@ export default class CornerOverlay extends Component {
       ctx.lineTo(0, h2 - bodyHeight);
     }
 
-    if (joinDirection === joinTypes.left) {
+    if (joinDirection === directions.left) {
       ctx.lineTo(width, 0);
       ctx.lineTo(width, height);
       ctx.lineTo(width, h2 - bodyHeight);
@@ -137,7 +137,7 @@ export default class CornerOverlay extends Component {
       ctx.lineTo(0, height);
     }
 
-    if (joinDirection === joinTypes.up) {
+    if (joinDirection === directions.up) {
       ctx.lineTo(0, height);
       ctx.lineTo(width, height);
       ctx.lineTo(w2 - bodyWidth, height);
@@ -151,7 +151,7 @@ export default class CornerOverlay extends Component {
       ctx.lineTo(width, 0);
     }
 
-    if (joinDirection === joinTypes.down) {
+    if (joinDirection === directions.down) {
       ctx.lineTo(0, height);
       ctx.lineTo(width, height);
       ctx.lineTo(width, 0);
@@ -181,7 +181,7 @@ export default class CornerOverlay extends Component {
       const { dividerDown } = subdivide;
       let cursor = null;
       if (!dividerDown) {
-        cursor = dividerDown.direction === directions.row ?
+        cursor = dividerDown.direction === splitTypes.vertical ?
           'col-resize' :
           'row-resize';
       }

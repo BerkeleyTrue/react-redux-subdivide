@@ -1,5 +1,5 @@
 import React from 'react';
-import { directions } from '../reducers';
+import { splitTypes } from '../reducers';
 import DividerTouch from './DividerTouch.jsx';
 
 let Rect = (props) => {
@@ -41,7 +41,7 @@ let Dividers = (props) => {
   let toInner = (divider) => {
     const { width, height, top, left, id, direction } = divider;
     let style;
-    if (direction === directions.col) {
+    if (direction === splitTypes.horizontal) {
       style = {
         width: width + borderSize * 2,
         height: height - borderSize * 2,

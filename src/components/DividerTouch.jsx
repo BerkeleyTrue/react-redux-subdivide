@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { directions } from '../reducers';
+import { splitTypes } from '../reducers';
 
 export default class Divider extends Component {
   constructor(props, context) {
@@ -40,7 +40,7 @@ export default class Divider extends Component {
       position: 'absolute'
     };
 
-    if (direction === directions.col) {
+    if (direction === splitTypes.horizontal) {
       touch.cursor = 'row-resize';
       touch.top -= touchMargin;
       touch.height += touchMargin * 2;

@@ -1,7 +1,7 @@
 import {
+  corners,
   directions,
-  cardinals,
-  joinTypes
+  splitTypes
 } from '../reducers';
 
 function getJoinDirection(
@@ -34,38 +34,38 @@ function getJoinDirection(
   const canJoinBefore = beforeId === child.id && !isBeforeGroup;
   const canJoinAfter = afterId === child.id && !isAfterGroup;
 
-  if (corner === cardinals.ne) {
-    if (direction === directions.col && canJoinBefore) {
-      return joinTypes.up;
+  if (corner === corners.ne) {
+    if (direction === splitTypes.verticle && canJoinBefore) {
+      return directions.up;
     }
-    if (direction === directions.row && canJoinAfter ) {
-      return joinTypes.right;
-    }
-  }
-
-  if (corner === cardinals.sw) {
-    if (direction === directions.col && canJoinAfter) {
-      return joinTypes.down;
-    }
-    if (direction === directions.row && canJoinBefore) {
-      return joinTypes.left;
+    if (direction === splitTypes.horizontal && canJoinAfter ) {
+      return directions.right;
     }
   }
 
-  if (corner === cardinals.nw) {
-    if (direction === directions.col && canJoinBefore) {
-      return joinTypes.up;
+  if (corner === corners.sw) {
+    if (direction === splitTypes.verticle && canJoinAfter) {
+      return directions.down;
     }
-    if (direction === directions.row && canJoinBefore) {
-      return joinTypes.left;
+    if (direction === splitTypes.horizontal && canJoinBefore) {
+      return directions.left;
     }
   }
-  if (corner === cardinals.se) {
-    if (direction === directions.col && canJoinAfter) {
-      return joinTypes.down;
+
+  if (corner === corners.nw) {
+    if (direction === splitTypes.verticle && canJoinBefore) {
+      return directions.up;
     }
-    if (direction === directions.row && canJoinAfter) {
-      return joinTypes.right;
+    if (direction === splitTypes.horizontal && canJoinBefore) {
+      return directions.left;
+    }
+  }
+  if (corner === corners.se) {
+    if (direction === splitTypes.verticle && canJoinAfter) {
+      return directions.down;
+    }
+    if (direction === splitTypes.horizontal && canJoinAfter) {
+      return directions.right;
     }
   }
   return null;
@@ -117,7 +117,7 @@ export default function secondPass(state) {
           beforeRatio,
           afterRatio: child.splitRatio,
           direction: parent.direction,
-          parentSize: parent.direction === directions.row ?
+          parentSize: parent.direction === splitTypes.horizontal ?
             parent.width :
             parent.height
         };
@@ -125,7 +125,7 @@ export default function secondPass(state) {
       }
       let width, height, left, top;
 
-      if (parent.direction === directions.row) {
+      if (parent.direction === splitTypes.horizontal) {
         if (hasDivider) {
           divider.width = cellSpacing;
           divider.height = parent.height;
@@ -136,7 +136,7 @@ export default function secondPass(state) {
         left = x;
         top = y;
         x += child.width;
-      } else if (parent.direction === directions.col) {
+      } else if (parent.direction === splitTypes.verticle) {
         if (hasDivider) {
           divider.width = parent.width;
           divider.height = cellSpacing;

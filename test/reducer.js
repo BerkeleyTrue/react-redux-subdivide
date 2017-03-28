@@ -3,7 +3,7 @@ import test from 'ava';
 import reducer, {
   ns,
 
-  cardinals,
+  corners,
   createLayout,
   createPane,
   directions,
@@ -43,7 +43,7 @@ test('state should not change for unrelated actions', t => {
 test('split right', (t) => {
   const endState = reducer(
     createLayout(),
-    split(0, splitTypes.right)
+    split(0, directions.right)
   );
 
   const original = endState.panesById[0];
@@ -54,38 +54,38 @@ test('split right', (t) => {
   t.truthy(parent);
   t.truthy(added);
   t.deepEqual(parent.childIds, [ original.id, added.id ]);
-  t.is(parent.direction, directions.row);
+  t.is(parent.direction, splitTypes.horizontal);
   t.is(original.parentId, parent.id);
   t.is(added.parentId, parent.id);
 });
 
 test('split left', (t) => {
-  const endState = reducer(createLayout(), split(0, splitTypes.left));
+  const endState = reducer(createLayout(), split(0, directions.left));
   const original = endState.panesById[0];
   const parent = endState.panesById[original.parentId];
   const added = endState.panesById[parent.childIds[0]];
 
   t.deepEqual(parent.childIds, [ added.id, original.id ]);
-  t.is(parent.direction, directions.row);
+  t.is(parent.direction, splitTypes.horizontal);
 });
 
 test('split above', (t) => {
   const endState = reducer(
     createLayout(),
-    split(0, splitTypes.above)
+    split(0, directions.up)
   );
   const original = endState.panesById[0];
   const parent = endState.panesById[original.parentId];
   const added = endState.panesById[parent.childIds[0]];
 
   t.deepEqual(parent.childIds, [ added.id, original.id ]);
-  t.is(parent.direction, directions.col);
+  t.is(parent.direction, splitTypes.vertical);
 });
 
 test('split below', (t) => {
   const endState = reducer(
     createLayout(),
-    split(0, splitTypes.below)
+    split(0, directions.down)
   );
   const original = endState.panesById[0];
   const parent = endState.panesById[original.parentId];
@@ -93,7 +93,7 @@ test('split below', (t) => {
     endState.panesById[parent.childIds[parent.childIds.length - 1]];
 
   t.deepEqual(parent.childIds, [ original.id, added.id ]);
-  t.is(parent.direction, directions.col);
+  t.is(parent.direction, splitTypes.vertical);
 });
 
 test('split non-root into two', t => {
@@ -113,7 +113,7 @@ test('split non-root into two', t => {
         id: 1,
         childIds: [ 0, 2, 3 ],
         isGroup: true,
-        direction: directions.row,
+        direction: splitTypes.horizontal,
         parentId: null,
         splitRatio: 1
       }),
@@ -135,7 +135,7 @@ test('split non-root into two', t => {
       })
     }
   });
-  const endState = reducer(startState, split(3, splitTypes.above));
+  const endState = reducer(startState, split(3, directions.up));
   t.truthy(
     endState.panesById[3],
     'split pane should still exist'
@@ -172,7 +172,7 @@ test('split pane in same direction', t => {
         id: 1,
         childIds: [ 0, 2 ],
         isGroup: true,
-        direction: directions.row,
+        direction: splitTypes.horizontal,
         parentId: null,
         splitRatio: 1
       }),
@@ -186,7 +186,7 @@ test('split pane in same direction', t => {
       })
     }
   });
-  const endState = reducer(startState, split(2, splitTypes.left));
+  const endState = reducer(startState, split(2, directions.left));
   t.truthy(
     endState.panesById[2],
     'split pane was removed'
@@ -226,7 +226,7 @@ test('join pane into root should not change state', t => {
         id: 1,
         childIds: [ 0, 2 ],
         isGroup: true,
-        direction: directions.row,
+        direction: splitTypes.horizontal,
         parentId: null,
         splitRatio: 1
       }),
@@ -263,7 +263,7 @@ test('join pane into group should not change state', t => {
         id: 1,
         childIds: [ 0, 2 ],
         isGroup: true,
-        direction: directions.row,
+        direction: splitTypes.horizontal,
         parentId: null,
         splitRatio: 1
       }),
@@ -319,7 +319,7 @@ test('join non-adacent panes should not change state', t => {
         id: 1,
         childIds: [ 0, 2, 3 ],
         isGroup: true,
-        direction: directions.row,
+        direction: splitTypes.horizontal,
         parentId: null,
         splitRatio: 1
       }),
@@ -367,7 +367,7 @@ test('join one of two in row below root', (t) => {
         id: 1,
         childIds: [ 0, 2 ],
         isGroup: true,
-        direction: directions.row,
+        direction: splitTypes.horizontal,
         parentId: null,
         splitRatio: 1
       }),
@@ -408,7 +408,7 @@ test('join one of three in row below root', (t) => {
         id: 1,
         childIds: [ 0, 2, 3 ],
         isGroup: true,
-        direction: directions.row,
+        direction: splitTypes.horizontal,
         parentId: null,
         splitRatio: 1
       }),
@@ -458,7 +458,7 @@ test('join one of two in row below root', (t) => {
         id: 1,
         childIds: [ 0, 2 ],
         isGroup: true,
-        direction: directions.row,
+        direction: splitTypes.horizontal,
         parentId: null,
         splitRatio: 1
       }),
@@ -576,7 +576,7 @@ test('update size on windows', t => {
 test('hoverOverCorner', t => {
   const endState = reducer(
     createLayout(),
-    hoverOverCorner({ paneId: 0, corner: cardinals.ne })
+    hoverOverCorner({ paneId: 0, corner: corners.ne })
   );
 
   t.truthy(
@@ -590,7 +590,7 @@ test('hoverOverCorner', t => {
   );
   t.is(
     endState.cornerHover.corner,
-    cardinals.ne,
+    corners.ne,
     'corner hover should have a cardinal'
   );
 });
@@ -598,7 +598,7 @@ test('hoverOverCorner', t => {
 test('blurCorner', t => {
   const endState = reducer(
     createLayout({
-      cornerHover: { paneId: 0, corner: cardinals.ne }
+      cornerHover: { paneId: 0, corner: corners.ne }
     }),
     blurCorner()
   );
@@ -612,7 +612,7 @@ test('blurCorner', t => {
 test('cornerPressed', t => {
   const endState = reducer(
     createLayout(),
-    cornerPressed({ paneId: 4, corner: cardinals.sw })
+    cornerPressed({ paneId: 4, corner: corners.sw })
   );
   t.truthy(
     endState.cornerDown,
@@ -625,7 +625,7 @@ test('cornerPressed', t => {
   );
   t.is(
     endState.cornerDown.corner,
-    cardinals.sw,
+    corners.sw,
     'corner down should have a cardinal'
   );
 });
@@ -633,7 +633,7 @@ test('cornerPressed', t => {
 test('cornerReleased', t => {
   const endState = reducer(
     createLayout({
-      cornerDown: { paneId: 4, corner: cardinals.sw }
+      cornerDown: { paneId: 4, corner: corners.sw }
     }),
     cornerReleased()
   );

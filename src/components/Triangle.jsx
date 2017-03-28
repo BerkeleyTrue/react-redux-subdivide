@@ -2,7 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
-  cardinals,
+  corners,
 
   cornerPressed,
   hoverOverCorner,
@@ -55,7 +55,7 @@ export class Corner extends Component {
       display: subdivide.dividerDown ? 'none' : 'block'
     };
 
-    if (corner === cardinals.ne) {
+    if (corner === corners.ne) {
       outer = {
         ...outer,
         top: 0,
@@ -63,7 +63,7 @@ export class Corner extends Component {
         cursor: 'grab',
         transform: `translate3d(${offset}px, ${-offset}px, 0) rotate(225deg)`
       };
-    } else if ( corner === cardinals.sw) {
+    } else if ( corner === corners.sw) {
       outer = {
         ...outer,
         bottom: 0,
@@ -71,7 +71,7 @@ export class Corner extends Component {
         cursor: 'grab',
         transform: `translate3d(${-offset}px, ${offset}px, 0) rotate(45deg)`
       };
-    } else if ( corner === cardinals.se) {
+    } else if ( corner === corners.se) {
       outer = {
         ...outer,
         bottom: 0,
@@ -79,7 +79,7 @@ export class Corner extends Component {
         cursor: 'grab',
         transform: `translate3d(${offset}px, ${offset}px, 0) rotate(315deg)`
       };
-    } else if ( corner === cardinals.nw) {
+    } else if ( corner === corners.nw) {
       outer = {
         ...outer,
         top: 0,

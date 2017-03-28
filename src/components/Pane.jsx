@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Triangle from './Triangle.jsx';
 import CornerOverlay from './CornerOverlay.jsx';
 
-import { cardinals } from '../reducers';
+import { corners } from '../reducers';
 
 function getStyles({
   width,
@@ -73,7 +73,7 @@ export default class Pane extends Component {
         <Triangle
           actions={ actions }
           color='#dadadf'
-          corner={ cardinals.sw }
+          corner={ corners.sw }
           pane={ pane }
           size={ 42 }
           subdivide={ subdivide }
@@ -81,7 +81,7 @@ export default class Pane extends Component {
         <Triangle
           actions={ actions }
           color='#dadadf'
-          corner={ cardinals.ne }
+          corner={ corners.ne }
           pane={ pane }
           size={ 42 }
           subdivide={ subdivide }
@@ -89,7 +89,7 @@ export default class Pane extends Component {
         <Triangle
           actions={ actions }
           color='#dadadf'
-          corner={ cardinals.nw }
+          corner={ corners.nw }
           pane={ pane }
           size={ 42 }
           subdivide={ subdivide }
@@ -97,7 +97,7 @@ export default class Pane extends Component {
         <Triangle
           actions={ actions }
           color='#dadadf'
-          corner={ cardinals.se }
+          corner={ corners.se }
           pane={ pane }
           size={ 42 }
           subdivide={ subdivide }

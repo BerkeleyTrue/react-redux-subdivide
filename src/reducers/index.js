@@ -9,33 +9,24 @@ import secondPass from '../helpers/secondPass';
 
 export const ns = 'subdivide';
 
-export const cardinals = {
-  ne: 'NE',
-  sw: 'SW',
-  se: 'SE',
-  nw: 'NW'
+export const corners = {
+  ne: 'north-east',
+  nw: 'north-west',
+  se: 'south-east',
+  sw: 'south-west'
+};
+
+export const splitTypes = {
+  horizontal: 'horizontal',
+  vertical: 'vertical'
 };
 
 export const directions = {
-  row: 'ROW',
-  col: 'COL'
+  down: 'down',
+  left: 'left',
+  right: 'right',
+  up: 'up'
 };
-
-export const splitTypes = createTypes([
-  'above',
-  'below',
-  'left',
-  'right',
-  'none'
-], 'split');
-
-
-export const joinTypes = createTypes([
-  'right',
-  'up',
-  'left',
-  'down'
-], 'join');
 
 export const types = createTypes([
   'join',
@@ -85,16 +76,16 @@ export const createLayout = (values = {}) => ({
 
 function getSplitDirection(splitType) {
   if (
-    splitType === splitTypes.above ||
-    splitType === splitTypes.below
+    splitType === directions.up ||
+    splitType === directions.down
   ) {
-    return directions.col;
+    return splitTypes.vertical;
   }
   if (
-    splitType === splitTypes.left ||
-    splitType === splitTypes.right
+    splitType === directions.left ||
+    splitType === directions.right
   ) {
-    return directions.row;
+    return splitTypes.horizontal;
   }
   return null;
 }
@@ -138,14 +129,14 @@ export const cornerReleased = createAction(types.cornerReleased);
 
 function getOffset(splitType) {
   if (
-    splitType === splitTypes.above ||
-    splitType === splitTypes.left
+    splitType === directions.up ||
+    splitType === directions.left
   ) {
     return 0;
   }
   if (
-    splitType === splitTypes.below ||
-    splitType === splitTypes.right
+    splitType === directions.down ||
+    splitType === directions.right
   ) {
     return 1;
   }
@@ -178,7 +169,7 @@ function getRatio(
   hasNewParent,
   { width, height, left, top, splitRatio }
 ) {
-  let ratio = direction === directions.row ?
+  let ratio = direction === splitTypes.horizontal ?
     (startX - left) / width :
     (startY - top) / height;
 

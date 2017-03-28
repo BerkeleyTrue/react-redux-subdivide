@@ -4,7 +4,7 @@ import Pane from './Pane.jsx';
 import Dividers from './Dividers.jsx';
 import AnimationFrame from '../helpers/AnimationFrame';
 import {
-  cardinals,
+  corners,
   directions,
   downDividerSelector,
   splitTypes,
@@ -61,7 +61,7 @@ export class Layout extends Component {
           startY
         } = downDividerSelector(subdivide);
 
-        const delta = direction === directions.row ?
+        const delta = direction === splitTypes.horizontal ?
           clientX - startX :
           clientY - startY;
         const deltaRatio = delta / parentSize;
@@ -82,35 +82,35 @@ export class Layout extends Component {
         if (clientX > left && clientX < left + width &&
           clientY > top && clientY < top + height) {
 
-          if (corner === cardinals.sw) {
+          if (corner === corners.sw) {
             if (clientX - left > 25) {
-              split(id, splitTypes.left, clientX, clientY);
+              split(id, directions.left, clientX, clientY);
             } else if (top + height - clientY > 25) {
-              split(id, splitTypes.below, clientX, clientY);
+              split(id, directions.down, clientX, clientY);
             }
           }
 
-          if (corner === cardinals.ne) {
+          if (corner === corners.ne) {
             if (left + width - clientX > 25) {
-              split(id, splitTypes.right, clientX, clientY);
+              split(id, directions.right, clientX, clientY);
             } else if (clientY - top > 25) {
-              split(id, splitTypes.above, clientX, clientY);
+              split(id, directions.up, clientX, clientY);
             }
           }
 
-          if (corner === cardinals.se) {
+          if (corner === corners.se) {
             if (left + width - clientX > 25) {
-              split(id, splitTypes.right, clientX, clientY);
+              split(id, directions.right, clientX, clientY);
             } else if (top + height - clientY > 25) {
-              split(id, splitTypes.below, clientX, clientY);
+              split(id, directions.down, clientX, clientY);
             }
           }
 
-          if (corner === cardinals.nw) {
+          if (corner === corners.nw) {
             if (clientX - left > 25) {
-              split(id, splitTypes.left, clientX, clientY);
+              split(id, directions.left, clientX, clientY);
             } else if (clientY - top > 25) {
-              split(id, splitTypes.above, clientX, clientY);
+              split(id, directions.up, clientX, clientY);
             }
           }
         }

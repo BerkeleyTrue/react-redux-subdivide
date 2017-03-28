@@ -2,12 +2,11 @@ import test from 'ava';
 import secondPass from '../src/helpers/secondPass.js';
 
 import {
-  cardinals,
+  corners,
   createLayout,
   createPane,
   directions,
-  splitTypes,
-  joinTypes
+  splitTypes
 } from '../src/reducers';
 
 test('root should not have join direction', t => {
@@ -15,7 +14,7 @@ test('root should not have join direction', t => {
     rootId: 1,
     cornerDown: {
       paneId: 1,
-      corner: cardinals.sw
+      corner: corners.sw
     },
     panesById: {
       0: createPane({
@@ -30,7 +29,7 @@ test('root should not have join direction', t => {
         id: 1,
         childIds: [ 0, 2 ],
         isGroup: true,
-        direction: directions.row,
+        direction: splitTypes.horizontal,
         parentId: null,
         splitRatio: 1
       }),
@@ -68,7 +67,7 @@ test('creates a divider for children', t => {
         id: 1,
         childIds: [ 0, 2 ],
         isGroup: true,
-        direction: directions.row,
+        direction: splitTypes.horizontal,
         parentId: null,
         splitRatio: 1
       }),
@@ -101,7 +100,7 @@ test('NE corner join right', t => {
     panes: [ 0, 1, 2 ],
     cornerDown: {
       paneId: 0,
-      corner: cardinals.ne
+      corner: corners.ne
     },
     panesById: {
       0: createPane({
@@ -116,7 +115,7 @@ test('NE corner join right', t => {
         id: 1,
         childIds: [ 0, 2 ],
         isGroup: true,
-        direction: directions.row,
+        direction: splitTypes.horizontal,
         parentId: null,
         splitRatio: 1
       }),
@@ -137,7 +136,7 @@ test('NE corner join right', t => {
   );
   t.is(
     end.panesById[2].joinDirection,
-    joinTypes.right,
+    directions.right,
     'second pass should add a join direction to child next to corner down pane'
   );
 });
@@ -148,7 +147,7 @@ test('NE corner join left', t => {
     panes: [ 0, 1, 2 ],
     cornerDown: {
       paneId: 2,
-      corner: cardinals.ne
+      corner: corners.ne
     },
     panesById: {
       0: createPane({
@@ -163,7 +162,7 @@ test('NE corner join left', t => {
         id: 1,
         childIds: [ 0, 2 ],
         isGroup: true,
-        direction: directions.col,
+        direction: splitTypes.verticle,
         parentId: null,
         splitRatio: 1
       }),
@@ -184,7 +183,7 @@ test('NE corner join left', t => {
   );
   t.is(
     end.panesById[0].joinDirection,
-    joinTypes.up,
+    directions.up,
     'second pass should add a join direction to child next to corner down pane'
   );
 });
