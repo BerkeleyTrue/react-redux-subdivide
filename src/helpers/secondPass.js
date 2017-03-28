@@ -35,7 +35,7 @@ function getJoinDirection(
   const canJoinAfter = afterId === child.id && !isAfterGroup;
 
   if (corner === corners.ne) {
-    if (direction === splitTypes.verticle && canJoinBefore) {
+    if (direction === splitTypes.vertical && canJoinBefore) {
       return directions.up;
     }
     if (direction === splitTypes.horizontal && canJoinAfter ) {
@@ -44,7 +44,7 @@ function getJoinDirection(
   }
 
   if (corner === corners.sw) {
-    if (direction === splitTypes.verticle && canJoinAfter) {
+    if (direction === splitTypes.vertical && canJoinAfter) {
       return directions.down;
     }
     if (direction === splitTypes.horizontal && canJoinBefore) {
@@ -53,7 +53,7 @@ function getJoinDirection(
   }
 
   if (corner === corners.nw) {
-    if (direction === splitTypes.verticle && canJoinBefore) {
+    if (direction === splitTypes.vertical && canJoinBefore) {
       return directions.up;
     }
     if (direction === splitTypes.horizontal && canJoinBefore) {
@@ -61,7 +61,7 @@ function getJoinDirection(
     }
   }
   if (corner === corners.se) {
-    if (direction === splitTypes.verticle && canJoinAfter) {
+    if (direction === splitTypes.vertical && canJoinAfter) {
       return directions.down;
     }
     if (direction === splitTypes.horizontal && canJoinAfter) {
@@ -136,7 +136,7 @@ export default function secondPass(state) {
         left = x;
         top = y;
         x += child.width;
-      } else if (parent.direction === splitTypes.verticle) {
+      } else {
         if (hasDivider) {
           divider.width = parent.width;
           divider.height = cellSpacing;

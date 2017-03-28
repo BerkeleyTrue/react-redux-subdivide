@@ -94,7 +94,55 @@ test('creates a divider for children', t => {
   );
 });
 
-test('NE corner join right', t => {
+test('NE corner join left vertical', t => {
+  const start = createLayout({
+    rootId: 1,
+    panes: [ 0, 1, 2 ],
+    cornerDown: {
+      paneId: 2,
+      corner: corners.ne
+    },
+    panesById: {
+      0: createPane({
+        id: 0,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.55
+      }),
+      1: createPane({
+        id: 1,
+        childIds: [ 0, 2 ],
+        isGroup: true,
+        direction: splitTypes.vertical,
+        parentId: null,
+        splitRatio: 1
+      }),
+      2: createPane({
+        id: 2,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.45
+      })
+    }
+  });
+  const end = secondPass(start);
+  t.truthy(
+    end.panesById[2].canSplit,
+    'second pass should add can split to panes with corners pressed'
+  );
+  t.is(
+    end.panesById[0].joinDirection,
+    directions.up,
+    'second pass should add a join up direction to sibling'
+  );
+});
+
+
+test('NE corner join right horizontal', t => {
   const start = createLayout({
     rootId: 1,
     panes: [ 0, 1, 2 ],
@@ -137,17 +185,17 @@ test('NE corner join right', t => {
   t.is(
     end.panesById[2].joinDirection,
     directions.right,
-    'second pass should add a join direction to child next to corner down pane'
+    'second pass should add a join right direction to sibling'
   );
 });
 
-test('NE corner join left', t => {
+test('north-west corner join vertical', t => {
   const start = createLayout({
     rootId: 1,
     panes: [ 0, 1, 2 ],
     cornerDown: {
       paneId: 2,
-      corner: corners.ne
+      corner: corners.nw
     },
     panesById: {
       0: createPane({
@@ -162,7 +210,7 @@ test('NE corner join left', t => {
         id: 1,
         childIds: [ 0, 2 ],
         isGroup: true,
-        direction: splitTypes.verticle,
+        direction: splitTypes.vertical,
         parentId: null,
         splitRatio: 1
       }),
@@ -184,6 +232,245 @@ test('NE corner join left', t => {
   t.is(
     end.panesById[0].joinDirection,
     directions.up,
-    'second pass should add a join direction to child next to corner down pane'
+    'second pass should add a join up direction to sibling'
+  );
+});
+
+
+test('north-west corner join horizontal', t => {
+  const start = createLayout({
+    rootId: 1,
+    panes: [ 0, 1, 2 ],
+    cornerDown: {
+      paneId: 2,
+      corner: corners.nw
+    },
+    panesById: {
+      0: createPane({
+        id: 0,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.55
+      }),
+      1: createPane({
+        id: 1,
+        childIds: [ 0, 2 ],
+        isGroup: true,
+        direction: splitTypes.horizontal,
+        parentId: null,
+        splitRatio: 1
+      }),
+      2: createPane({
+        id: 2,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.45
+      })
+    }
+  });
+  const end = secondPass(start);
+  t.truthy(
+    end.panesById[2].canSplit,
+    'second pass should add can split to panes with corners pressed'
+  );
+  t.is(
+    end.panesById[0].joinDirection,
+    directions.left,
+    'second pass should add a join left direction sibling'
+  );
+});
+
+test('south-west corner join vertical', t => {
+  const start = createLayout({
+    rootId: 1,
+    panes: [ 0, 1, 2 ],
+    cornerDown: {
+      paneId: 0,
+      corner: corners.sw
+    },
+    panesById: {
+      0: createPane({
+        id: 0,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.55
+      }),
+      1: createPane({
+        id: 1,
+        childIds: [ 0, 2 ],
+        isGroup: true,
+        direction: splitTypes.vertical,
+        parentId: null,
+        splitRatio: 1
+      }),
+      2: createPane({
+        id: 2,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.45
+      })
+    }
+  });
+  const end = secondPass(start);
+  t.truthy(
+    end.panesById[0].canSplit,
+    'second pass should add can split to panes with corners pressed'
+  );
+  t.is(
+    end.panesById[2].joinDirection,
+    directions.down,
+    'second pass should add a join down direction to sibling'
+  );
+});
+
+
+test('south-west corner join horizontal', t => {
+  const start = createLayout({
+    rootId: 1,
+    panes: [ 0, 1, 2 ],
+    cornerDown: {
+      paneId: 2,
+      corner: corners.sw
+    },
+    panesById: {
+      0: createPane({
+        id: 0,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.55
+      }),
+      1: createPane({
+        id: 1,
+        childIds: [ 0, 2 ],
+        isGroup: true,
+        direction: splitTypes.horizontal,
+        parentId: null,
+        splitRatio: 1
+      }),
+      2: createPane({
+        id: 2,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.45
+      })
+    }
+  });
+  const end = secondPass(start);
+  t.truthy(
+    end.panesById[2].canSplit,
+    'second pass should add can split to panes with corners pressed'
+  );
+  t.is(
+    end.panesById[0].joinDirection,
+    directions.left,
+    'second pass should add a join left direction to sibling'
+  );
+});
+
+
+test('south-east corner join vertical', t => {
+  const start = createLayout({
+    rootId: 1,
+    panes: [ 0, 1, 2 ],
+    cornerDown: {
+      paneId: 0,
+      corner: corners.se
+    },
+    panesById: {
+      0: createPane({
+        id: 0,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.55
+      }),
+      1: createPane({
+        id: 1,
+        childIds: [ 0, 2 ],
+        isGroup: true,
+        direction: splitTypes.vertical,
+        parentId: null,
+        splitRatio: 1
+      }),
+      2: createPane({
+        id: 2,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.45
+      })
+    }
+  });
+  const end = secondPass(start);
+  t.truthy(
+    end.panesById[0].canSplit,
+    'second pass should add can split to panes with corners pressed'
+  );
+  t.is(
+    end.panesById[2].joinDirection,
+    directions.down,
+    'second pass should add a join down direction to sibling'
+  );
+});
+
+
+test('south-east corner join horizontal', t => {
+  const start = createLayout({
+    rootId: 1,
+    panes: [ 0, 1, 2 ],
+    cornerDown: {
+      paneId: 0,
+      corner: corners.se
+    },
+    panesById: {
+      0: createPane({
+        id: 0,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.55
+      }),
+      1: createPane({
+        id: 1,
+        childIds: [ 0, 2 ],
+        isGroup: true,
+        direction: splitTypes.horizontal,
+        parentId: null,
+        splitRatio: 1
+      }),
+      2: createPane({
+        id: 2,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.45
+      })
+    }
+  });
+  const end = secondPass(start);
+  t.truthy(
+    end.panesById[0].canSplit,
+    'second pass should add can split to panes with corners pressed'
+  );
+  t.is(
+    end.panesById[2].joinDirection,
+    directions.right,
+    'second pass should add a join right direction sibling'
   );
 });
