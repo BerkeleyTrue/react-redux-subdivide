@@ -1,50 +1,33 @@
-'use strict'
-
-let path = require('path')
-let webpack = require('webpack')
+const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'source-map',
   entry: {
     bundle: [
-      'eventsource-polyfill', // necessary for hot reloading with IE
-      'webpack-hot-middleware/client',
       './src/index'
     ],
-    // 'docs': [
-    //   'eventsource-polyfill', // necessary for hot reloading with IE
-    //   'webpack-hot-middleware/client',
-    //   './docs/app.js'
-    // ],
-    'examples': [
-      'eventsource-polyfill', // necessary for hot reloading with IE
-      'webpack-hot-middleware/client',
-      './examples/app.js'
+    examples: [
+      './examples/app.jsx'
     ]
   },
   output: {
     path: path.join(__dirname, 'dist'),
     filename: '[name].js',
-    publicPath: '/static/'
+    publicPath: '/'
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.NamedModulesPlugin()
   ],
-  resolve: {
-    modulesDirectories: [
-      path.join(__dirname, 'src'),
-      'node_modules'
-    ]
-  },
   module: {
     loaders: [
       {
         test: /\.jsx?/,
-        loaders: [ 'babel' ],
+        loaders: [ 'babel-loader' ],
         include: [
           path.join(__dirname, 'src'),
-          path.join(__dirname, 'docs'),
           path.join(__dirname, 'examples')
         ]
       },
@@ -53,4 +36,4 @@ module.exports = {
       }
     ]
   }
-}
+};

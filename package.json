@@ -7,7 +7,7 @@
     "build:webpack": "cross-env NODE_ENV=production webpack --config webpack.config.prod.js",
     "build:babel": "NODE_ENV=lib babel src --out-dir lib",
     "build": "npm run clean && npm run build:babel",
-    "start": "node devServer.js",
+    "start": "webpack-dev-server --content-base examples --hot --config webpack.config.dev.js --port 3000",
     "lint": "eslint src",
     "commit": "git-cz",
     "test": "npm run test:ava",
@@ -92,7 +92,6 @@
     "nodemon": "^1.11.0",
     "nyc": "^10.1.2",
     "react": "^0.14.3",
-    "react-addons-test-utils": "^0.14.6",
     "react-docgen": "^2.6.1",
     "react-dom": "^0.14.3",
     "react-redux": "^3.0.1",
@@ -103,9 +102,8 @@
     "socket.io": "^1.4.0",
     "static-site-generator-webpack-plugin": "^2.0.1",
     "url-loader": "^0.5.7",
-    "webpack": "^1.12.9",
-    "webpack-dev-middleware": "^1.4.0",
-    "webpack-hot-middleware": "^2.6.0",
+    "webpack": "^2.3.2",
+    "webpack-dev-server": "^2.4.2",
     "webpack-stats-plugin": "^0.1.1"
   },
   "config": {
@@ -120,6 +118,10 @@
     "debug": false
   },
   "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-redux": "^5.0.3",
+    "redux": "^3.6.0",
     "redux-actions": "^2.0.1",
     "redux-create-types": "0.0.1",
     "reselect": "^3.0.0"
