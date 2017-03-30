@@ -4,6 +4,15 @@ import {
   splitTypes
 } from '../redux';
 
+
+export function shouldNormalize(state = {}, newState) {
+  return newState !== state && (
+    newState.panesById !== state.panesById ||
+    newState.height !== state.height ||
+    newState.width !== state.width
+  );
+}
+
 function getJoinDirection(
   panesById,
  { paneId, corner } = {},
@@ -71,6 +80,7 @@ function getJoinDirection(
   return null;
 }
 
+// will add appropriate dimensions to panes and add dividers when needed
 export default function normalize(state) {
   const { rootId, width, height, cellSpacing, cornerDown } = state;
   const panesById = { ...state.panesById };

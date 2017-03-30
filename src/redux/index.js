@@ -5,7 +5,7 @@ import {
 } from 'redux-actions';
 import { createTypes } from 'redux-create-types';
 
-import normalize from '../utils/normalize.js';
+import normalize, { shouldNormalize } from '../utils/normalize.js';
 import {
   getSplitDirection,
   getOffset,
@@ -368,10 +368,10 @@ const _reducer = handleActions({
 
 export default function reducer(state, action) {
   const newState = _reducer(state, action);
-  if (newState === state) {
-    return state;
+  if (shouldNormalize(state, newState)) {
+    return normalize(newState);
   }
-  return normalize(newState);
+  return newState;
 }
 
 reducer.toString = () => ns;
