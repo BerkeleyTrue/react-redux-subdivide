@@ -1,12 +1,15 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
+
 import Pane from './Pane.jsx';
 import Dividers from './Dividers.jsx';
+
 import AnimationFrame from '../helpers/AnimationFrame';
 import {
   corners,
   directions,
-  downDividerSelector,
+  getNSState,
+  pressedDividerSelector,
   splitTypes,
 
   cornerReleased,
@@ -17,7 +20,10 @@ import {
 } from '../redux';
 
 const minRatioChange = 20;
-const mapStateToProps = null;
+const mapStateToProps = state => ({
+  subdivide: getNSState(state),
+  pressedDivider: pressedDividerSelector(state)
+});
 const mapDispatchToProps = {
   cornerReleased,
   dividerReleased,
@@ -27,11 +33,16 @@ const mapDispatchToProps = {
 };
 
 const propTypes = {
-  DefaultComponent: PropTypes.element,
+  DefaultComponent: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.string
+  ]),
   cornerReleased: PropTypes.func,
-  dividerReleased: PropTypes.func,
   dividerMoved: PropTypes.func,
+  dividerReleased: PropTypes.func,
+  pressedDivider: PropTypes.object,
   split: PropTypes.func,
+  subdivide: PropTypes.object,
   windowResize: PropTypes.func
 };
 
@@ -48,25 +59,24 @@ export class Layout extends Component {
     this.animationFrame = new AnimationFrame();
 
     this.onMouseMove = this.animationFrame.throttle(({ clientX, clientY }) => {
-      const { subdivide } = this.props;
+      const { pressedDivider, subdivide } = this.props;
 
-      if (subdivide.dividerDown) {
-        const divider = subdivide.dividerDown;
+      if (pressedDivider.id) {
         const {
-          beforePaneId,
           afterPaneId,
+          beforePaneId,
           direction,
           parentSize,
           startX,
           startY
-        } = downDividerSelector(subdivide);
+        } = pressedDivider;
 
         const delta = direction === splitTypes.horizontal ?
           clientX - startX :
           clientY - startY;
         const deltaRatio = delta / parentSize;
-        const afterRatio = divider.afterRatio - deltaRatio;
-        const beforeRatio = divider.beforeRatio + deltaRatio;
+        const afterRatio = pressedDivider.afterRatio - deltaRatio;
+        const beforeRatio = pressedDivider.beforeRatio + deltaRatio;
         if (
           beforeRatio * parentSize > minRatioChange &&
           afterRatio * parentSize > minRatioChange

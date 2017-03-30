@@ -180,7 +180,7 @@ export default class CornerOverlay extends Component {
     if (!(joinDirection || canSplit)) {
       const { dividerDown } = subdivide;
       let cursor = null;
-      if (!dividerDown) {
+      if (dividerDown) {
         cursor = dividerDown.direction === splitTypes.vertical ?
           'col-resize' :
           'row-resize';

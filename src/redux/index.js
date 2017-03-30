@@ -5,6 +5,7 @@ import {
 } from 'redux-actions';
 import { createTypes } from 'redux-create-types';
 
+import createSelector from '../utils/create-selector.js';
 import normalize, { shouldNormalize } from '../utils/normalize.js';
 import {
   getSplitDirection,
@@ -117,16 +118,28 @@ export const createLayout = (values = {}) => ({
 export function getNSState(state) {
   return state[ns];
 }
-export function downDividerSelector(state) {
-  const { dividerDown } = getNSState(state);
-  if (!dividerDown) {
-    return null;
+
+export const dividerSelector = createSelector(
+  (_, props) => props.dividerId,
+  state => state.dividers,
+  (id, dividers) => dividers[id]
+);
+
+export const touchMarginSelector = state => getNSState(state).touchMargin;
+
+export const pressedDividerSelector = createSelector(
+  state => state.dividerDown,
+  state => state.dividers,
+  (dividerDown, dividers) => {
+    if (!dividerDown) {
+      return {};
+    }
+    return {
+      ...dividers[dividerDown.id],
+      ...dividerDown
+    };
   }
-  return {
-    ...getNSState(state).dividers[dividerDown.id],
-    ...dividerDown
-  };
-}
+);
 
 const _reducer = handleActions({
   // creates a new pane group, puts the existing and the newly created pane
