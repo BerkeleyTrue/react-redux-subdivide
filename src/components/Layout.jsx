@@ -15,8 +15,7 @@ import {
   cornerReleased,
   dividerReleased,
   dividerMoved,
-  split,
-  windowResize
+  split
 } from '../redux';
 
 const minRatioChange = 20;
@@ -28,8 +27,7 @@ const mapDispatchToProps = {
   cornerReleased,
   dividerReleased,
   dividerMoved,
-  split,
-  windowResize
+  split
 };
 
 const propTypes = {
@@ -42,8 +40,7 @@ const propTypes = {
   dividerReleased: PropTypes.func,
   pressedDivider: PropTypes.object,
   split: PropTypes.func,
-  subdivide: PropTypes.object,
-  windowResize: PropTypes.func
+  subdivide: PropTypes.object
 };
 
 export class Layout extends Component {
@@ -53,8 +50,7 @@ export class Layout extends Component {
       cornerReleased,
       dividerReleased,
       dividerMoved,
-      split,
-      windowResize
+      split
     } = props;
     this.animationFrame = new AnimationFrame();
 
@@ -141,15 +137,8 @@ export class Layout extends Component {
       }, 10);
     };
 
-    window.addEventListener('resize', () => {
-      windowResize(window.innerWidth, window.innerHeight);
-    });
-
     document.addEventListener('mouseup', this.onMouseUp);
     document.addEventListener('mousemove', this.onMouseMove);
-
-
-    windowResize(window.innerWidth, window.innerHeight);
   }
 
   componentWillUnmount() {
