@@ -1,5 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 
 import Pane from './Pane.jsx';
 import Dividers from './Dividers.jsx';
@@ -8,21 +9,26 @@ import AnimationFrame from '../helpers/AnimationFrame';
 import {
   corners,
   directions,
-  getNSState,
-  pressedDividerSelector,
   splitTypes,
 
   cornerReleased,
-  dividerReleased,
   dividerMoved,
-  split
+  dividerReleased,
+  split,
+
+  paneIdsSelector,
+  pressedDividerSelector
 } from '../redux';
 
 const minRatioChange = 20;
-const mapStateToProps = state => ({
-  subdivide: getNSState(state),
-  pressedDivider: pressedDividerSelector(state)
-});
+const mapStateToProps = createSelector(
+  pressedDividerSelector,
+  paneIdsSelector,
+  (pressedDivider, panes)=> ({
+    pressedDivider,
+    panes
+  })
+);
 const mapDispatchToProps = {
   cornerReleased,
   dividerReleased,
@@ -38,6 +44,7 @@ const propTypes = {
   cornerReleased: PropTypes.func,
   dividerMoved: PropTypes.func,
   dividerReleased: PropTypes.func,
+  panes: PropTypes.array,
   pressedDivider: PropTypes.object,
   split: PropTypes.func,
   subdivide: PropTypes.object
@@ -145,29 +152,29 @@ export class Layout extends Component {
     this.animationFrame.stop();
   }
 
-  render() {
-    const { subdivide, DefaultComponent } = this.props;
-    const panes = Object.keys(subdivide.panesById)
-      .map(key => subdivide.panesById[key])
-      .filter(pane => !pane.isGroup)
-      .map(pane => {
+  renderPanes(panes = [], DefaultComponent) {
+    return panes
+      .map(paneId => {
         return (
           <Pane
             DefaultComponent={ DefaultComponent }
-            key={ pane.id }
-            pane={ pane }
-            subdivide={ subdivide }
+            key={ paneId }
+            paneId={ paneId }
           />
         );
       });
+  }
+
+  render() {
+    const {
+      DefaultComponent,
+      panes
+    } = this.props;
 
     return (
       <div>
-        { panes }
-        <Dividers
-          dividers={ subdivide.dividers }
-          subdivide={ subdivide }
-        />
+        { this.renderPanes(panes, DefaultComponent) }
+        <Dividers />
       </div>
     );
   }

@@ -136,6 +136,16 @@ export const layoutSizeSelector = createSelector(
   })
 );
 
+export const panesSelector = createSelector(
+  state => state.panesById,
+  panesById => Object.keys(panesById).map(id => panesById[id])
+);
+
+export const paneIdsSelector = createSelector(
+  state => state.panesById,
+  panesById => Object.keys(panesById)
+);
+
 export const dividersSelector = createSelector(
   state => state.dividers,
   dividers => Object.keys(dividers).map(id => dividers[id])
