@@ -2,10 +2,16 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
-import DividerTouch from './DividerTouch.jsx';
+import Divider from './Divider.jsx';
 import Rectangle from './Rectangle.jsx';
 
-import { splitTypes, getNSState } from '../redux';
+import {
+  splitTypes,
+
+  borderSizeSelector,
+  dividersSelector,
+  layoutSizeSelector
+} from '../redux';
 
 const propTypes = {
   borderSize: PropTypes.number,
@@ -15,14 +21,13 @@ const propTypes = {
 };
 
 const mapStateToProps = createSelector(
-  state => getNSState(state).borderSize,
-  state => getNSState(state).dividers,
-  state => getNSState(state).height,
-  state => getNSState(state).width,
-  (borderSize, dividers, layoutHeight, layoutWidth) => {
+  borderSizeSelector,
+  dividersSelector,
+  layoutSizeSelector,
+  (borderSize, dividers, { layoutHeight, layoutWidth }) => {
     return {
       borderSize,
-      dividers: Object.keys(dividers).map(id => dividers[id]),
+      dividers,
       layoutHeight,
       layoutWidth
     };
@@ -56,7 +61,6 @@ export class Dividers extends Component {
       layoutWidth
     } = this.props;
     let style;
-    debugger;
     if (direction === splitTypes.horizontal) {
       style = {
         height: height - borderSize * 2,
@@ -104,7 +108,7 @@ export class Dividers extends Component {
         { dividers.map(this.renderBorder) }
         {
           dividers.map(divider => (
-            <DividerTouch
+            <Divider
               divider={ divider }
               dividerId={ divider.id }
               key={ divider.id }

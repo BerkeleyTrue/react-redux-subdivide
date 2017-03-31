@@ -126,6 +126,20 @@ export const dividerSelector = createSelector(
 );
 
 export const touchMarginSelector = state => getNSState(state).touchMargin;
+export const borderSizeSelector = state => getNSState(state).borderSize;
+export const layoutSizeSelector = createSelector(
+  state => state.height,
+  state => state.width,
+  (layoutHeight, layoutWidth) => ({
+    layoutHeight,
+    layoutWidth
+  })
+);
+
+export const dividersSelector = createSelector(
+  state => state.dividers,
+  dividers => Object.keys(dividers).map(id => dividers[id])
+);
 
 export const pressedDividerSelector = createSelector(
   state => state.dividerDown,
