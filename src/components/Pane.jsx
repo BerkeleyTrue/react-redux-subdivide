@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Triangle from './Triangle.jsx';
+import Corner from './Corner.jsx';
 import CornerOverlay from './CornerOverlay.jsx';
 
 import { corners } from '../redux';
@@ -70,7 +70,7 @@ export default class Pane extends Component {
           pane={ pane }
           subdivide={ subdivide }
         />
-        <Triangle
+        <Corner
           actions={ actions }
           color='#dadadf'
           corner={ corners.sw }
@@ -78,7 +78,7 @@ export default class Pane extends Component {
           size={ 42 }
           subdivide={ subdivide }
         />
-        <Triangle
+        <Corner
           actions={ actions }
           color='#dadadf'
           corner={ corners.ne }
@@ -86,7 +86,7 @@ export default class Pane extends Component {
           size={ 42 }
           subdivide={ subdivide }
         />
-        <Triangle
+        <Corner
           actions={ actions }
           color='#dadadf'
           corner={ corners.nw }
@@ -94,7 +94,7 @@ export default class Pane extends Component {
           size={ 42 }
           subdivide={ subdivide }
         />
-        <Triangle
+        <Corner
           actions={ actions }
           color='#dadadf'
           corner={ corners.se }
