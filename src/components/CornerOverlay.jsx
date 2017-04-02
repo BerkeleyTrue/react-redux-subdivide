@@ -1,11 +1,46 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 import {
   corners,
   directions,
-  splitTypes
+  splitTypes,
+
+  makePaneSelector,
+  pressedDividerSelector,
+  pressedCornerSelector
 } from '../redux';
 
-export default class CornerOverlay extends Component {
+const propTypes = {
+  canSplit: PropTypes.bool,
+  corner: PropTypes.string,
+  height: PropTypes.number,
+  isDividerPressed: PropTypes.bool,
+  isCornerPressed: PropTypes.bool,
+  joinDirection: PropTypes.string,
+  left: PropTypes.number,
+  splitType: PropTypes,
+  top: PropTypes.number,
+  width: PropTypes.number
+};
+function mapStateToProps(state, { paneId }) {
+  return createSelector(
+    makePaneSelector(paneId),
+    pressedDividerSelector,
+    pressedCornerSelector,
+    (pane, divider, { corner }) => {
+      return {
+        ...pane,
+        corner,
+        isDividerPressed: !!divider.id,
+        isCornerPressed: !!corner
+      };
+    }
+  );
+}
+const mapDispatchToProps = null;
+
+export class CornerOverlay extends Component {
 
   componentDidMount() {
     this.updateJoinOverlay();
@@ -23,22 +58,23 @@ export default class CornerOverlay extends Component {
   }
 
   updateDivideOverlay() {
-    const { pane, subdivide } = this.props;
-    if (!pane.canSplit || !subdivide.cornerDown) {
+    const { canvas } = this.refs;
+    const {
+      canSplit,
+      corner,
+      height,
+      isCornerPressed,
+      width
+    } = this.props;
+    if (!canSplit || !isCornerPressed) {
       return null;
     }
-    const { corner } = subdivide.cornerDown;
-
-    const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
-    let { width, height, top, left } = pane;
-    height = Math.round(height + top - (top || 0));
-    width = Math.round(width + left - (left || 0));
-    let dashRatio = 0.5;
-    let dashWidth = 3;
-    let dashSpacing = 20;
-    let dashLength = dashRatio * dashSpacing;
-    let offset = 34;
+    const dashRatio = 0.5;
+    const dashWidth = 3;
+    const dashSpacing = 20;
+    const dashLength = dashRatio * dashSpacing;
+    const offset = 34;
     ctx.clearRect(0, 0, width, height);
     ctx.beginPath();
     ctx.rect(0, 0, width, height);
@@ -50,7 +86,8 @@ export default class CornerOverlay extends Component {
       for (let y = 0; y < height; y += dashSpacing) {
         ctx.rect(offset, height - y - dashLength, dashWidth, dashLength);
       }
-    } else if (corner === corners.ne) {
+    }
+    if (corner === corners.ne) {
       for (let x = 0; x < width; x += dashSpacing) {
         ctx.rect(width - x - dashLength, offset, dashLength, dashWidth);
       }
@@ -58,7 +95,8 @@ export default class CornerOverlay extends Component {
       for (let y = 0; y < height; y += dashSpacing) {
         ctx.rect(width - offset - dashWidth, y, dashWidth, dashLength);
       }
-    } else if (corner === corners.nw) {
+    }
+    if (corner === corners.nw) {
       for (let x = 0; x < width; x += dashSpacing) {
         ctx.rect(x, offset, dashLength, dashWidth);
       }
@@ -66,7 +104,8 @@ export default class CornerOverlay extends Component {
       for (let y = 0; y < height; y += dashSpacing) {
         ctx.rect(offset, y, dashWidth, dashLength);
       }
-    } else if (corner === corners.se) {
+    }
+    if (corner === corners.se) {
       for (let x = 0; x < width; x += dashSpacing) {
         ctx.rect(
           width - x - dashLength,
@@ -89,23 +128,25 @@ export default class CornerOverlay extends Component {
     ctx.fillStyle = '#999';
     ctx.closePath();
     ctx.fill('evenodd');
+    return null;
   }
 
   updateJoinOverlay() {
-    const { pane } = this.props;
-    if (!pane.joinDirection) {
+    const { canvas } = this.refs;
+    const {
+      height,
+      joinDirection,
+      width
+    } = this.props;
+    if (!joinDirection) {
       return null;
     }
-    const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
-    let { width, height, top, left, joinDirection } = pane;
-    height = Math.round(height + top - (top || 0));
-    width = Math.round(width + left - (left || 0));
-    let size = Math.min(width, height);
-    let bodyHeight = ((size / 3) / 2) || 0;
-    let bodyWidth = ((size / 3) / 2) || 0;
-    let w2 = (width / 2) || 0;
-    let h2 = (height / 2) || 0;
+    const size = Math.min(width, height);
+    const bodyHeight = ((size / 3) / 2) || 0;
+    const bodyWidth = bodyHeight;
+    const w2 = (width / 2) || 0;
+    const h2 = (height / 2) || 0;
     ctx.clearRect(0, 0, width, height);
     ctx.beginPath();
     ctx.moveTo(0, 0);
@@ -168,20 +209,29 @@ export default class CornerOverlay extends Component {
     ctx.closePath();
 
     ctx.fill();
+    return null;
   }
 
   render() {
-    let { subdivide } = this.props;
-    let { joinDirection, canSplit } = this.props.pane;
-    if (!subdivide.cornerDown && !subdivide.dividerDown) {
+    const {
+      canSplit,
+      height,
+      isDividerPressed,
+      isCornerPressed,
+      joinDirection,
+      left,
+      splitType,
+      top,
+      width
+    } = this.props;
+    if (!isDividerPressed && !isCornerPressed) {
       return false;
     }
 
-    if (!(joinDirection || canSplit)) {
-      const { dividerDown } = subdivide;
+    if (!joinDirection && !canSplit) {
       let cursor = null;
-      if (dividerDown) {
-        cursor = dividerDown.direction === splitTypes.vertical ?
+      if (isDividerPressed) {
+        cursor = splitType === splitTypes.vertical ?
           'col-resize' :
           'row-resize';
       }
@@ -195,13 +245,9 @@ export default class CornerOverlay extends Component {
         }}/>
       );
     }
-
-    let { width, height, top, left } = this.props.pane;
-    height = Math.round(height + top - (top || 0));
-    width = Math.round(width + left - (left || 0));
     return (
       <canvas
-        height={height}
+        height={ Math.round(height + top - (top || 0)) }
         ref='canvas'
         style={{
           background: '#fff',
@@ -210,8 +256,16 @@ export default class CornerOverlay extends Component {
           position: 'absolute',
           top: 0
         }}
-        width={ width }
+        width={ Math.round(width + left - (left || 0)) }
       />
     );
   }
 }
+
+CornerOverlay.propTypes = propTypes;
+CornerOverlay.displayName = 'CornerOverlay';
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CornerOverlay);

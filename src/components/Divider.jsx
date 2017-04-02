@@ -4,12 +4,15 @@ import { createSelector } from 'reselect';
 
 import {
   splitTypes,
-  dividerSelector,
+
+  dividerPressed,
+  makeDividerSelector,
   touchMarginSelector
 } from '../redux';
 
 const propTypes = {
   direction: PropTypes.string,
+  dividerPressed: PropTypes.func,
   dividerId: PropTypes.string,
   height: PropTypes.number,
   left: PropTypes.number,
@@ -18,54 +21,42 @@ const propTypes = {
   width: PropTypes.number
 };
 
-const mapStateToProps = createSelector(
-  dividerSelector,
-  touchMarginSelector,
-  (divider, touchMargin) => {
-    return {
-      ...divider,
-      touchMargin
-    };
-  }
-);
+function makeMapStateToProps(state, { dividerId }) {
+  const dividerSelector = makeDividerSelector(dividerId);
+  return createSelector(
+    dividerSelector,
+    touchMarginSelector,
+    (divider, touchMargin) => {
+      return {
+        ...divider,
+        touchMargin
+      };
+    }
+  );
+}
 
-mapStateToProps.dependsOnOwnProps = true;
-
-const mapDispatchToProps = null;
+function mapDispatchToProps(dispatch, { dividerId }) {
+  const dispatchers = {
+    dividerPressed: ({ clientX, clientY}) => dispatch(dividerPressed({
+      dividerId,
+      startX: clientX,
+      startY: clientY
+    }))
+  };
+  return () => dispatchers;
+}
 
 export class Divider extends Component {
-  constructor(props, context) {
-    super(props, context);
-
-    this.removeListeners = () => {
-      document.removeEventListener('mouseup', this.onMouseUp);
-    };
-
-    this.onMouseUp = () => {
-      const { actions } = this.props;
-      actions.setDividerDown();
-      this.removeListeners();
-    };
-
-    this.onMouseDown = ({ clientX, clientY }) => {
-      const { actions, divider } = this.props;
-
-      actions.setDividerDown({ ...divider, startX: clientX, startY: clientY });
-
-      document.addEventListener('mouseup', this.onMouseUp);
-    };
-  }
-
-  componentWillUnmount() {
-    this.removeListeners();
-  }
-
   dividerStyle() {
     const {
-      touchMargin
+      direction,
+      height,
+      left,
+      top,
+      touchMargin,
+      width
     } = this.props;
-    const { width, height, top, left, direction } = this.props.divider;
-    let touch = {
+    const touch = {
       height,
       left,
       position: 'absolute',
@@ -89,11 +80,12 @@ export class Divider extends Component {
 
   render() {
     const styles = this.dividerStyle();
+    const { dividerPressed } = this.props;
 
     return (
       <div
         className='divider'
-        onMouseDown={ this.onMouseDown }
+        onMouseDown={ dividerPressed }
         style={ styles.touch }
         >
         <div style={ styles.border }>
@@ -108,6 +100,6 @@ Divider.displayName = 'Divider';
 Divider.propTypes = propTypes;
 
 export default connect(
-  mapStateToProps,
+  makeMapStateToProps,
   mapDispatchToProps
 )(Divider);

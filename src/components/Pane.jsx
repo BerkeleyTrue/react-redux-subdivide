@@ -1,109 +1,104 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+
 import Corner from './Corner.jsx';
 import CornerOverlay from './CornerOverlay.jsx';
 
-import { corners } from '../redux';
+import {
+  corners,
 
-function getStyles({
-  width,
-  height,
-  top,
-  left
-}) {
-  return {
-    pane: {
-      position: 'absolute',
-      width: width + 'px',
-      height: height + 'px',
-      top: top + 'px',
-      left: left + 'px',
-      overflow: 'hidden'
-    }
-  };
+  mouseUpOnPane,
+
+  makePaneSelector
+} from '../redux';
+
+const propTypes = {
+  paneId: PropTypes.number,
+  DefaultComponent: PropTypes.node,
+  height: PropTypes.number,
+  id: PropTypes.number,
+  isGroup: PropTypes.bool,
+  left: PropTypes.number,
+  mouseUpOnPane: PropTypes.func,
+  top: PropTypes.number,
+  width: PropTypes.number
+};
+
+function makeMapStateToProps(state, { paneId }) {
+  const paneSelector = makePaneSelector(paneId);
+  return paneSelector;
 }
 
-export default class Pane extends Component {
-  constructor(props, context) {
-    super(props, context);
+function mapDispatchToProps(dispatch, { paneId }) {
+  const dispatchers = {
+    mouseUpOnPane: () => dispatch(mouseUpOnPane(paneId))
+  };
+  return () => dispatchers;
+}
 
-    this.onMouseUp = () => {
-      // Note this on mouse up happens after Subdivide on mouse up
-      const { actions, subdivide, pane } = this.props;
-      const { join } = actions;
-      if (!subdivide.cornerDown) {
-        return null;
-      }
-      const cornerDownId = subdivide.cornerDown.id;
-      if (pane.joinDirection) {
-        join(cornerDownId, pane.id);
-        actions.setCornerDown();
-      }
-      return null;
-    };
-  }
-
+export class Pane extends Component {
   render() {
+    const {
+      DefaultComponent,
+      height,
+      id,
+      isGroup,
+      left,
+      mouseUpOnPane,
+      paneId,
+      top,
+      width
+    } = this.props;
 
-    if (!this.props.pane) {
-      return <div style={{ visibility: 'hidden' }} />;
-    }
-
-    if (this.props.pane.isGroup) {
+    if (!id || isGroup) {
       return null;
     }
 
-    const { pane, subdivide, actions, DefaultComponent } = this.props;
-    const styles = getStyles(pane);
+    const style = {
+      height: height + 'px',
+      left: left + 'px',
+      overflow: 'hidden',
+      position: 'absolute',
+      top: top + 'px',
+      width: width + 'px'
+    };
 
     return (
       <div
-        onMouseMove={ this.onMouseMove }
-        onMouseUp={ this.onMouseUp }
-        style={ styles.pane }
+        onMouseUp={ mouseUpOnPane }
+        style={ style }
         >
-        <DefaultComponent
-          subdivide={ subdivide }
-          subdivideActions={ actions }
-          subdividePane={ pane }
-        />
-        <CornerOverlay
-          pane={ pane }
-          subdivide={ subdivide }
-        />
+        <DefaultComponent />
+        <CornerOverlay paneId={ paneId } />
         <Corner
-          actions={ actions }
-          color='#dadadf'
           corner={ corners.sw }
-          pane={ pane }
-          size={ 42 }
-          subdivide={ subdivide }
+          paneId={ id }
         />
         <Corner
-          actions={ actions }
-          color='#dadadf'
           corner={ corners.ne }
-          pane={ pane }
+          paneId={ id }
           size={ 42 }
-          subdivide={ subdivide }
         />
         <Corner
-          actions={ actions }
-          color='#dadadf'
           corner={ corners.nw }
-          pane={ pane }
+          paneId={ id }
           size={ 42 }
-          subdivide={ subdivide }
         />
         <Corner
-          actions={ actions }
-          color='#dadadf'
           corner={ corners.se }
-          pane={ pane }
+          paneId={ id }
           size={ 42 }
-          subdivide={ subdivide }
         />
       </div>
     );
   }
 }
 
+
+Pane.propTypes = propTypes;
+Pane.displayName = 'Pane';
+
+export default connect(
+  makeMapStateToProps,
+  mapDispatchToProps
+)(Pane);

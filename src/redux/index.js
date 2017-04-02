@@ -40,6 +40,8 @@ export const types = createTypes([
   'join',
   'split',
 
+  'mouseUpOnPane',
+
   'dividerPressed',
   'dividerMoved',
   'dividerReleased',
@@ -65,6 +67,8 @@ export const split = createAction(
     startY
   })
 );
+
+export const mouseUpOnPane = createAction(types.mouseUpOnPane);
 
 export const dividerPressed = createAction(types.dividerPressed);
 export const dividerReleased = createAction(types.dividerReleased);
@@ -119,12 +123,6 @@ export function getNSState(state) {
   return state[ns];
 }
 
-export const dividerSelector = createSelector(
-  (_, props) => props.dividerId,
-  state => state.dividers,
-  (id, dividers) => dividers[id]
-);
-
 export const touchMarginSelector = state => getNSState(state).touchMargin;
 export const borderSizeSelector = state => getNSState(state).borderSize;
 export const layoutSizeSelector = createSelector(
@@ -136,6 +134,13 @@ export const layoutSizeSelector = createSelector(
   })
 );
 
+export function makePaneSelector(paneId) {
+  return createSelector(
+    state => state.panesById,
+    panesById => panesById[paneId] || {}
+  );
+}
+
 export const panesSelector = createSelector(
   state => state.panesById,
   panesById => Object.keys(panesById).map(id => panesById[id])
@@ -145,6 +150,13 @@ export const paneIdsSelector = createSelector(
   state => state.panesById,
   panesById => Object.keys(panesById)
 );
+
+export function makeDividerSelector(dividerId) {
+  return createSelector(
+    state => state.dividers,
+    (dividers) => dividers[dividerId]
+  );
+}
 
 export const dividersSelector = createSelector(
   state => state.dividers,
@@ -164,6 +176,14 @@ export const pressedDividerSelector = createSelector(
     };
   }
 );
+
+export function pressedCornerSelector(state) {
+  return getNSState(state).cornerDown || {};
+}
+
+export function hoveredCornerSelector(state) {
+  return getNSState(state).cornerHover || {};
+}
 
 const _reducer = handleActions({
   // creates a new pane group, puts the existing and the newly created pane
