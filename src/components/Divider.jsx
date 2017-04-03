@@ -63,16 +63,14 @@ export class Divider extends Component {
       top,
       width
     };
-    // backgroundColor: 'rgba(0,0,0,0.5)',
-
     if (direction === splitTypes.horizontal) {
-      touch.cursor = 'row-resize';
-      touch.top -= touchMargin;
-      touch.height += touchMargin * 2;
-    } else {
       touch.cursor = 'col-resize';
       touch.left -= touchMargin;
       touch.width += touchMargin * 2;
+    } else {
+      touch.cursor = 'row-resize';
+      touch.top -= touchMargin;
+      touch.height += touchMargin * 2;
     }
 
     return { touch };
