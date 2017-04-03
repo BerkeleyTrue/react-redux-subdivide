@@ -6,13 +6,13 @@ export function getSplitDirection(direction) {
     direction === directions.up ||
     direction === directions.down
   ) {
-    return splitTypes.vertical;
+    return splitTypes.horizontal;
   }
   if (
     direction === directions.left ||
     direction === directions.right
   ) {
-    return splitTypes.horizontal;
+    return splitTypes.vertical;
   }
   return null;
 }

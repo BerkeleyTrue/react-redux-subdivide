@@ -64,13 +64,13 @@ export class Divider extends Component {
       width
     };
     if (direction === splitTypes.horizontal) {
-      touch.cursor = 'col-resize';
-      touch.left -= touchMargin;
-      touch.width += touchMargin * 2;
-    } else {
       touch.cursor = 'row-resize';
       touch.top -= touchMargin;
       touch.height += touchMargin * 2;
+    } else {
+      touch.cursor = 'col-resize';
+      touch.left -= touchMargin;
+      touch.width += touchMargin * 2;
     }
 
     return { touch };

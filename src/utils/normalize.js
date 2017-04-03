@@ -128,14 +128,14 @@ export default function normalize(state) {
           afterRatio: child.splitRatio,
           direction: parent.direction,
           parentSize: parent.direction === splitTypes.horizontal ?
-            parent.width :
-            parent.height
+            parent.height :
+            parent.width
         };
         dividers[divider.id] = divider;
       }
       let width, height, left, top;
 
-      if (parent.direction === splitTypes.horizontal) {
+      if (parent.direction === splitTypes.vertical) {
         if (hasDivider) {
           divider.width = cellSpacing;
           divider.height = parent.height;

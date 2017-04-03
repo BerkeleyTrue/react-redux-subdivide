@@ -14,7 +14,6 @@ import { createSelector } from 'reselect';
 import {
   types,
   corners,
-  splitTypes,
 
   cornerReleased,
   dividerMoved,
@@ -28,7 +27,6 @@ import {
   pressedDividerSelector
 } from './index.js';
 
-const minRatioChange = 20;
 function isWithinPane(x, y, { top, left, height, width }) {
   return (
     x > left &&
@@ -47,8 +45,7 @@ const mouseMoveMapStateToProps = createSelector(
       corner,
       isCornerPressed: !!corner,
       isDividerPressed: !!pressedDivider.id,
-      pane: panesById[paneId] || {},
-      pressedDivider
+      pane: panesById[paneId] || {}
     };
   }
 );
@@ -64,7 +61,6 @@ export function mouseMoveEpic(actions, { getState }, { document }) {
             corner,
             isDividerPressed,
             isCornerPressed,
-            pressedDivider,
             pane
           } = mouseMoveMapStateToProps(getState());
 
@@ -75,33 +71,7 @@ export function mouseMoveEpic(actions, { getState }, { document }) {
             return null;
           }
           if (isDividerPressed) {
-            const {
-              afterPaneId,
-              beforePaneId,
-              direction,
-              parentSize,
-              startX,
-              startY
-            } = pressedDivider;
-
-            const delta = direction === splitTypes.horizontal ?
-              clientX - startX :
-              clientY - startY;
-            const deltaRatio = delta / parentSize;
-            const afterRatio = pressedDivider.afterRatio - deltaRatio;
-            const beforeRatio = pressedDivider.beforeRatio + deltaRatio;
-
-            if (
-              beforeRatio * parentSize > minRatioChange &&
-              afterRatio * parentSize > minRatioChange
-            ) {
-              return dividerMoved(
-                beforePaneId,
-                afterPaneId,
-                beforeRatio,
-                afterRatio
-              );
-            }
+            return dividerMoved({ clientX, clientY });
           }
 
 

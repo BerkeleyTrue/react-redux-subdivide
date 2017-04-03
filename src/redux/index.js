@@ -80,15 +80,7 @@ export const mouseUpOnPane = createAction(types.mouseUpOnPane);
 
 export const dividerPressed = createAction(types.dividerPressed);
 export const dividerReleased = createAction(types.dividerReleased);
-export const dividerMoved = createAction(
-  types.dividerMoved,
-  (afterPaneId, beforePaneId, afterRatio, beforeRatio) => ({
-    afterPaneId,
-    afterRatio,
-    beforePaneId,
-    beforeRatio
-  })
-);
+export const dividerMoved = createAction(types.dividerMoved);
 
 export const hoverOverCorner = createAction(types.hoverOverCorner);
 export const blurCorner = createAction(types.blurCorner);
@@ -390,19 +382,53 @@ const _reducer = handleActions({
     },
 
   [types.dividerMoved]: (state, { payload }) => {
-    const { afterPaneId, afterRatio, beforePaneId, beforeRatio } = payload;
-    const { panesById } = state;
+    const { clientX, clientY } = payload;
+    const minRatioChange = 20;
+    const {
+      panesById,
+      dividers,
+      dividerDown: {
+        id: dividerId
+      }
+    } = state;
+    const divider = dividers[dividerId];
+    const { id: beforePaneId, parentId } = panesById[divider.beforePaneId];
+    const { id: afterPaneId } = panesById[divider.beforePaneId];
+    const {
+      direction,
+      height,
+      top,
+      left,
+      width
+    } = panesById[parentId];
+    const right = left + width;
+    const bottom = top + height;
+
+    const parentSize = direction === splitTypes.horizontal ? height : width;
+    const pos = direction === splitTypes.horizontal ? clientY : clientX;
+    const max = direction === splitTypes.horizontal ? bottom : right;
+    const min = direction === splitTypes.horizontal ? top : left;
+
+    // if mouse pos is outside the parent then do nothing
+    // we add a buffer here of minRatioChange
+    if (
+      max - pos < minRatioChange ||
+      min + pos < minRatioChange
+    ) {
+      return state;
+    }
+    const splitRatio = (parentSize - pos) / parentSize;
     return {
       ...state,
       panesById: {
         ...panesById,
         [afterPaneId]: {
           ...panesById[afterPaneId],
-          splitRatio: afterRatio
+          splitRatio
         },
         [beforePaneId]: {
           ...panesById[beforePaneId],
-          splitRatio: beforeRatio
+          splitRatio: 1 - splitRatio
         }
       }
     };
