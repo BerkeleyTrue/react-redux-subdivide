@@ -14,7 +14,10 @@ import {
 
 const propTypes = {
   paneId: PropTypes.number,
-  DefaultComponent: PropTypes.node,
+  DefaultComponent: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.string
+  ]),
   height: PropTypes.number,
   id: PropTypes.number,
   isGroup: PropTypes.bool,
@@ -50,7 +53,7 @@ export class Pane extends Component {
       width
     } = this.props;
 
-    if (!id || isGroup) {
+    if (!id && typeof id !== 'number' || isGroup) {
       return null;
     }
 

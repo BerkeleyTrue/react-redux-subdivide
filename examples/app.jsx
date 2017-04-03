@@ -19,7 +19,8 @@ const store = createStore(
         subdivideEpic,
         {
           dependencies: {
-            window
+            window,
+            document
           }
         }
       )

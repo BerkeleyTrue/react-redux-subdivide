@@ -46,12 +46,15 @@ export const types = createTypes([
   'dividerMoved',
   'dividerReleased',
 
-  'windowResize',
 
   'cornerPressed',
   'cornerReleased',
   'hoverOverCorner',
-  'blurCorner'
+  'blurCorner',
+
+  'layoutMounted',
+
+  'windowResize'
 ], ns);
 
 export const join = createAction(
@@ -60,13 +63,18 @@ export const join = createAction(
 );
 export const split = createAction(
   types.split,
-  (id, splitType, startX = 10, startY = 10) => ({
+  (splitType, id, startX = 10, startY = 10) => ({
     id,
     splitType,
     startX,
     startY
   })
 );
+
+split.up = split.bind(null, directions.up);
+split.down = split.bind(null, directions.down);
+split.right = split.bind(null, directions.right);
+split.left = split.bind(null, directions.left);
 
 export const mouseUpOnPane = createAction(types.mouseUpOnPane);
 
@@ -82,15 +90,17 @@ export const dividerMoved = createAction(
   })
 );
 
-export const windowResize = createAction(
-  types.windowResize,
-  (width, height) => ({ width, height })
-);
-
 export const hoverOverCorner = createAction(types.hoverOverCorner);
 export const blurCorner = createAction(types.blurCorner);
 export const cornerPressed = createAction(types.cornerPressed);
 export const cornerReleased = createAction(types.cornerReleased);
+
+export const layoutMounted = createAction(types.layoutMounted);
+
+export const windowResize = createAction(
+  types.windowResize,
+  (width, height) => ({ width, height })
+);
 
 export const createInitialState =
   (...args) => normalize(createLayout(...args));
@@ -134,6 +144,7 @@ export const layoutSizeSelector = createSelector(
   })
 );
 
+export const panesByIdSelector = state => getNSState(state).panesById || {};
 export function makePaneSelector(paneId) {
   return createSelector(
     state => state.panesById,
@@ -148,7 +159,7 @@ export const panesSelector = createSelector(
 
 export const paneIdsSelector = createSelector(
   state => state.panesById,
-  panesById => Object.keys(panesById)
+  panesById => Object.keys(panesById).map(parseInt)
 );
 
 export function makeDividerSelector(dividerId) {

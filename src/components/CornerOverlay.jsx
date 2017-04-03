@@ -19,10 +19,11 @@ const propTypes = {
   isCornerPressed: PropTypes.bool,
   joinDirection: PropTypes.string,
   left: PropTypes.number,
-  splitType: PropTypes,
+  splitType: PropTypes.string,
   top: PropTypes.number,
   width: PropTypes.number
 };
+
 function mapStateToProps(state, { paneId }) {
   return createSelector(
     makePaneSelector(paneId),
@@ -38,10 +39,10 @@ function mapStateToProps(state, { paneId }) {
     }
   );
 }
+
 const mapDispatchToProps = null;
 
 export class CornerOverlay extends Component {
-
   componentDidMount() {
     this.updateJoinOverlay();
     this.updateDivideOverlay();

@@ -5,22 +5,15 @@ import { createSelector } from 'reselect';
 import Pane from './Pane.jsx';
 import Dividers from './Dividers.jsx';
 
-import AnimationFrame from '../helpers/AnimationFrame';
 import {
-  corners,
-  directions,
-  splitTypes,
+  ns,
 
-  cornerReleased,
-  dividerMoved,
-  dividerReleased,
-  split,
+  layoutMounted,
 
   paneIdsSelector,
   pressedDividerSelector
 } from '../redux';
 
-const minRatioChange = 20;
 const mapStateToProps = createSelector(
   pressedDividerSelector,
   paneIdsSelector,
@@ -30,10 +23,7 @@ const mapStateToProps = createSelector(
   })
 );
 const mapDispatchToProps = {
-  cornerReleased,
-  dividerReleased,
-  dividerMoved,
-  split
+  layoutMounted
 };
 
 const propTypes = {
@@ -41,115 +31,14 @@ const propTypes = {
     PropTypes.func,
     PropTypes.string
   ]),
-  cornerReleased: PropTypes.func,
-  dividerMoved: PropTypes.func,
-  dividerReleased: PropTypes.func,
+  layoutMounted: PropTypes.func,
   panes: PropTypes.array,
-  pressedDivider: PropTypes.object,
-  split: PropTypes.func,
-  subdivide: PropTypes.object
+  pressedDivider: PropTypes.object
 };
 
 export class Layout extends Component {
-  constructor(props, ...args) {
-    super(props, ...args);
-    const {
-      cornerReleased,
-      dividerReleased,
-      dividerMoved,
-      split
-    } = props;
-    this.animationFrame = new AnimationFrame();
-
-    this.onMouseMove = this.animationFrame.throttle(({ clientX, clientY }) => {
-      const { pressedDivider, subdivide } = this.props;
-
-      if (pressedDivider.id) {
-        const {
-          afterPaneId,
-          beforePaneId,
-          direction,
-          parentSize,
-          startX,
-          startY
-        } = pressedDivider;
-
-        const delta = direction === splitTypes.horizontal ?
-          clientX - startX :
-          clientY - startY;
-        const deltaRatio = delta / parentSize;
-        const afterRatio = pressedDivider.afterRatio - deltaRatio;
-        const beforeRatio = pressedDivider.beforeRatio + deltaRatio;
-        if (
-          beforeRatio * parentSize > minRatioChange &&
-          afterRatio * parentSize > minRatioChange
-        ) {
-          dividerMoved(beforePaneId, afterPaneId, beforeRatio, afterRatio);
-        }
-      }
-
-      if (subdivide.cornerDown) {
-        const pane = subdivide.cornerDown;
-        const { width, height, left, top, id, corner } = pane;
-
-        if (clientX > left && clientX < left + width &&
-          clientY > top && clientY < top + height) {
-
-          if (corner === corners.sw) {
-            if (clientX - left > 25) {
-              split(id, directions.left, clientX, clientY);
-            } else if (top + height - clientY > 25) {
-              split(id, directions.down, clientX, clientY);
-            }
-          }
-
-          if (corner === corners.ne) {
-            if (left + width - clientX > 25) {
-              split(id, directions.right, clientX, clientY);
-            } else if (clientY - top > 25) {
-              split(id, directions.up, clientX, clientY);
-            }
-          }
-
-          if (corner === corners.se) {
-            if (left + width - clientX > 25) {
-              split(id, directions.right, clientX, clientY);
-            } else if (top + height - clientY > 25) {
-              split(id, directions.down, clientX, clientY);
-            }
-          }
-
-          if (corner === corners.nw) {
-            if (clientX - left > 25) {
-              split(id, directions.left, clientX, clientY);
-            } else if (clientY - top > 25) {
-              split(id, directions.up, clientX, clientY);
-            }
-          }
-        }
-      }
-
-    });
-
-    this.onMouseUp = () => {
-      const { subdivide } = this.props;
-      if (subdivide.dividerDown) {
-        dividerReleased();
-      }
-      // give pane onMouseUp a chance to fire
-      setTimeout(()=>{
-        if (subdivide.cornerDown) {
-          cornerReleased();
-        }
-      }, 10);
-    };
-
-    document.addEventListener('mouseup', this.onMouseUp);
-    document.addEventListener('mousemove', this.onMouseMove);
-  }
-
-  componentWillUnmount() {
-    this.animationFrame.stop();
+  componentDidMount() {
+    this.props.layoutMounted();
   }
 
   renderPanes(panes = [], DefaultComponent) {
@@ -172,7 +61,7 @@ export class Layout extends Component {
     } = this.props;
 
     return (
-      <div>
+      <div id={ ns }>
         { this.renderPanes(panes, DefaultComponent) }
         <Dividers />
       </div>
