@@ -159,7 +159,7 @@ export const panesSelector = createSelector(
 
 export const paneIdsSelector = createSelector(
   state => state.panesById,
-  panesById => Object.keys(panesById).map(parseInt)
+  panesById => Object.keys(panesById).map(id => parseInt(id, 10))
 );
 
 export function makeDividerSelector(dividerId) {
