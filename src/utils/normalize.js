@@ -145,7 +145,7 @@ export default function normalize(state) {
         height = parent.height;
         left = x;
         top = y;
-        x += child.width;
+        x += width;
       } else {
         if (hasDivider) {
           divider.width = parent.width;
@@ -156,7 +156,7 @@ export default function normalize(state) {
         height = parent.height * child.splitRatio - spacingOffset;
         left = x;
         top = y;
-        y += child.height;
+        y += height;
       }
       child.width = width;
       child.height = height;
