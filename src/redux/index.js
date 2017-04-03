@@ -63,11 +63,11 @@ export const join = createAction(
 );
 export const split = createAction(
   types.split,
-  (splitType, id, startX = 10, startY = 10) => ({
+  (splitType, id, clientX, clientY) => ({
     id,
     splitType,
-    startX,
-    startY
+    clientX,
+    clientY
   })
 );
 
@@ -195,7 +195,7 @@ const _reducer = handleActions({
   // pane (id 1) make this the root pane, create a new pane, and finally attach
   // those two panes as children of the new root group pane
   // Split(0) => Group(1) < Children(0, 2)
-  [types.split]: (state, { payload: { id, splitType, startX, startY } }) => {
+  [types.split]: (state, { payload: { id, splitType, clientX, clientY } }) => {
     const panes = [ ...state.panes ];
     const panesById = { ...state.panesById };
     const currentPane = { ...panesById[id] };
@@ -248,8 +248,8 @@ const _reducer = handleActions({
     const currentPaneIndex = childIds.indexOf(id);
 
     const [ ratioA, ratioB ] = getSplitRatios(
-      startX,
-      startY,
+      clientX,
+      clientY,
       direction,
       offset,
       // has new parent ?
@@ -276,8 +276,8 @@ const _reducer = handleActions({
     panesById[currentPane.id] = currentPane;
     const dividerDown = {
       id: newDividerId,
-      startX,
-      startY
+      startX: clientX,
+      startY: clientY
     };
     return {
       ...state,
@@ -393,7 +393,7 @@ const _reducer = handleActions({
     } = state;
     const divider = dividers[dividerId];
     const { id: beforePaneId, parentId } = panesById[divider.beforePaneId];
-    const { id: afterPaneId } = panesById[divider.beforePaneId];
+    const { id: afterPaneId } = panesById[divider.afterPaneId];
     const {
       direction,
       height,
