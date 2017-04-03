@@ -38,7 +38,7 @@ function makeMapStateToProps(state, { dividerId }) {
 function mapDispatchToProps(dispatch, { dividerId }) {
   const dispatchers = {
     dividerPressed: ({ clientX, clientY}) => dispatch(dividerPressed({
-      dividerId,
+      id: dividerId,
       startX: clientX,
       startY: clientY
     }))
