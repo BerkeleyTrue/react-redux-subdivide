@@ -69,8 +69,8 @@ export function mouseMoveEpic(actions, { getState }, { document }) {
           } = mouseMoveMapStateToProps(getState());
 
           if (
-            (!isDividerPressed || !isCornerPressed) &&
-            !isWithinPane(clientX, clientY, pane)
+            !isDividerPressed &&
+            !(isCornerPressed && isWithinPane(clientX, clientY, pane))
           ) {
             return null;
           }
