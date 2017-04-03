@@ -175,7 +175,7 @@ export function releaseCornerEpic(actions, { getState }, { document }) {
 }
 
 export function dividerEpic(actions) {
-  return actions.ofType(types.dividerPressed)
+  return actions.ofType(types.dividerPressed, types.split)
     ::switchMap(() => {
       return FromEventObservable.create(document, 'mouseup')
         ::map(() => dividerReleased());
