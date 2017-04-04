@@ -78,6 +78,7 @@
     "commitizen": "^2.5.0",
     "component-playground": "^1.0.5",
     "compression": "^1.6.0",
+    "coveralls": "^2.13.0",
     "cross-env": "^1.0.6",
     "cz-conventional-changelog": "^1.1.5",
     "ecology": "^1.0.4",
