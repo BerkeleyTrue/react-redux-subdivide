@@ -60,24 +60,24 @@ export function getNextId(panes = [ 0 ]) {
 }
 
 // getSplitRatios(
-//   startX: Number,
-//   startY: Number,
+//   clientX: Number,
+//   clientY: Number,
 //   offset: 0|1,
 //   splitType: ...SplitTypes
 //   hasNewParent: Boolean,
 //   child: Pane
 // ) => [ ratioA: Number, ratioB: Number ];
 export function getSplitRatios(
-  startX,
-  startY,
+  clientX,
+  clientY,
   offset,
   splitType,
   hasNewParent,
   { width, height, left, top, splitRatio }
 ) {
-  let ratio = splitType === splitTypes.horizontal ?
-    (startX - left) / width :
-    (startY - top) / height;
+  let ratio = splitType === splitTypes.vertical ?
+    (clientX - left) / width :
+    (clientY - top) / height;
 
   let ratioA = ratio = offset ? ratio : 1 - ratio;
   let ratioB = 1 - ratioA;

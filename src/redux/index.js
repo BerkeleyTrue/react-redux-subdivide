@@ -250,8 +250,8 @@ const _reducer = handleActions({
     const [ ratioA, ratioB ] = getSplitRatios(
       clientX,
       clientY,
-      direction,
       offset,
+      direction,
       // has new parent ?
       currentParent.id === oldParentId,
       currentPane
@@ -391,20 +391,30 @@ const _reducer = handleActions({
         id: dividerId
       }
     } = state;
-    const divider = dividers[dividerId];
-    const { id: beforePaneId, parentId } = panesById[divider.beforePaneId];
-    const { id: afterPaneId } = panesById[divider.afterPaneId];
-    const {
-      direction,
-      height,
-      top,
-      left,
-      width
-    } = panesById[parentId];
-    const right = left + width;
-    const bottom = top + height;
+    const { beforePaneId, afterPaneId } = dividers[dividerId];
+    const beforePane = panesById[beforePaneId];
+    const afterPane = panesById[afterPaneId];
+    const { direction, ...parent } = panesById[beforePane.parentId];
 
-    const parentSize = direction === splitTypes.horizontal ? height : width;
+    const top = beforePane.top;
+    const bottom = Math.min(
+      top + parent.height,
+      top +
+        beforePane.splitRatio * parent.height +
+        afterPane.splitRatio * parent.height
+    );
+
+    const left = beforePane.left;
+    const right = Math.min(
+      left + parent.width,
+      left +
+        beforePane.splitRatio * parent.width +
+        afterPane.splitRatio * parent.width
+    );
+
+    const parentSize = direction === splitTypes.horizontal ?
+      parent.height :
+      parent.width;
     const pos = direction === splitTypes.horizontal ? clientY : clientX;
     const max = direction === splitTypes.horizontal ? bottom : right;
     const min = direction === splitTypes.horizontal ? top : left;
@@ -417,18 +427,19 @@ const _reducer = handleActions({
     ) {
       return state;
     }
-    const splitRatio = (parentSize - pos) / parentSize;
+    const splitA = (max - pos) / parentSize;
+    const splitB = (pos - min) / parentSize;
     return {
       ...state,
       panesById: {
         ...panesById,
         [afterPaneId]: {
           ...panesById[afterPaneId],
-          splitRatio
+          splitRatio: splitA
         },
         [beforePaneId]: {
           ...panesById[beforePaneId],
-          splitRatio: 1 - splitRatio
+          splitRatio: splitB
         }
       }
     };
