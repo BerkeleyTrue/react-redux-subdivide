@@ -75,11 +75,11 @@ export function getSplitRatios(
   hasNewParent,
   { width, height, left, top, splitRatio }
 ) {
-  let ratio = splitType === splitTypes.vertical ?
+  const ratio = splitType === splitTypes.vertical ?
     (clientX - left) / width :
     (clientY - top) / height;
 
-  let ratioA = ratio = offset ? ratio : 1 - ratio;
+  let ratioA = offset ? ratio : 1 - ratio;
   let ratioB = 1 - ratioA;
 
   if (hasNewParent) {
