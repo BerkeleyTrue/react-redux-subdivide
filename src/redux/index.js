@@ -140,7 +140,17 @@ export const panesByIdSelector = state => getNSState(state).panesById || {};
 export function makePaneSelector(paneId) {
   return createSelector(
     state => state.panesById,
-    panesById => panesById[paneId] || {}
+    panesById => {
+      const pane = panesById[paneId];
+      if (pane) {
+        const parent = panesById[pane.parentId] || {};
+        return {
+          ...pane,
+          splitType: parent.direction
+        };
+      }
+      return {};
+    }
   );
 }
 

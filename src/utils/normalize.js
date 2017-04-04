@@ -9,7 +9,8 @@ export function shouldNormalize(state = {}, newState) {
   return newState !== state && (
     newState.panesById !== state.panesById ||
     newState.height !== state.height ||
-    newState.width !== state.width
+    newState.width !== state.width ||
+    newState.cornerDown !== state.cornerDown
   );
 }
 
@@ -44,36 +45,36 @@ function getJoinDirection(
   const canJoinAfter = afterId === child.id && !isAfterGroup;
 
   if (corner === corners.ne) {
-    if (direction === splitTypes.vertical && canJoinBefore) {
+    if (direction === splitTypes.horizontal && canJoinBefore) {
       return directions.up;
     }
-    if (direction === splitTypes.horizontal && canJoinAfter ) {
+    if (direction === splitTypes.vertical && canJoinAfter ) {
       return directions.right;
     }
   }
 
   if (corner === corners.sw) {
-    if (direction === splitTypes.vertical && canJoinAfter) {
+    if (direction === splitTypes.horizontal && canJoinAfter) {
       return directions.down;
     }
-    if (direction === splitTypes.horizontal && canJoinBefore) {
+    if (direction === splitTypes.vertical && canJoinBefore) {
       return directions.left;
     }
   }
 
   if (corner === corners.nw) {
-    if (direction === splitTypes.vertical && canJoinBefore) {
+    if (direction === splitTypes.horizontal && canJoinBefore) {
       return directions.up;
     }
-    if (direction === splitTypes.horizontal && canJoinBefore) {
+    if (direction === splitTypes.vertical && canJoinBefore) {
       return directions.left;
     }
   }
   if (corner === corners.se) {
-    if (direction === splitTypes.vertical && canJoinAfter) {
+    if (direction === splitTypes.horizontal && canJoinAfter) {
       return directions.down;
     }
-    if (direction === splitTypes.horizontal && canJoinAfter) {
+    if (direction === splitTypes.vertical && canJoinAfter) {
       return directions.right;
     }
   }
@@ -93,7 +94,7 @@ export default function normalize(state) {
     height,
     top,
     left,
-    canSplit: cornerDown && cornerDown.id === rootId
+    canSplit: cornerDown && cornerDown.paneId === rootId
   };
 
 

@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 import {
@@ -29,12 +29,12 @@ function mapStateToProps(state, { paneId }) {
     makePaneSelector(paneId),
     pressedDividerSelector,
     pressedCornerSelector,
-    (pane, divider, { corner }) => {
+    (pane, { id }, { corner }) => {
       return {
         ...pane,
         corner,
-        isDividerPressed: !!divider.id,
-        isCornerPressed: !!corner
+        isCornerPressed: !!corner,
+        isDividerPressed: !!id
       };
     }
   );
@@ -42,15 +42,10 @@ function mapStateToProps(state, { paneId }) {
 
 const mapDispatchToProps = null;
 
-export class CornerOverlay extends Component {
+export class CornerOverlay extends PureComponent {
   componentDidMount() {
     this.updateJoinOverlay();
     this.updateDivideOverlay();
-  }
-
-  shouldComponentUpdate(nextProps) {
-    return this.props.width === nextProps.width &&
-      this.props.height === nextProps.height;
   }
 
   componentDidUpdate() {
