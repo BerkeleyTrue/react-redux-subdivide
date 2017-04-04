@@ -40,6 +40,9 @@
     "require": [
       "babel-register"
     ],
+    "files": [
+      "test/*.js"
+    ],
     "babel": "inherit",
     "failFast": true
   },

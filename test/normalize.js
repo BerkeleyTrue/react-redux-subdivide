@@ -94,7 +94,7 @@ test('creates a divider for children', t => {
   );
 });
 
-test('NE corner join left vertical', t => {
+test('NE corner join left horizontal', t => {
   const start = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
@@ -115,7 +115,7 @@ test('NE corner join left vertical', t => {
         id: 1,
         childIds: [ 0, 2 ],
         isGroup: true,
-        direction: splitTypes.vertical,
+        direction: splitTypes.horizontal,
         parentId: null,
         splitRatio: 1
       }),
@@ -142,7 +142,7 @@ test('NE corner join left vertical', t => {
 });
 
 
-test('NE corner join right horizontal', t => {
+test('NE corner join right vertical', t => {
   const start = createInitialState({
     rootId: 1,
     panes: [ 0, 1, 2 ],
@@ -163,7 +163,7 @@ test('NE corner join right horizontal', t => {
         id: 1,
         childIds: [ 0, 2 ],
         isGroup: true,
-        direction: splitTypes.horizontal,
+        direction: splitTypes.vertical,
         parentId: null,
         splitRatio: 1
       }),
@@ -231,7 +231,7 @@ test('north-west corner join vertical', t => {
   );
   t.is(
     end.panesById[0].joinDirection,
-    directions.up,
+    directions.left,
     'second pass should add a join up direction to sibling'
   );
 });
@@ -279,7 +279,7 @@ test('north-west corner join horizontal', t => {
   );
   t.is(
     end.panesById[0].joinDirection,
-    directions.left,
+    directions.up,
     'second pass should add a join left direction sibling'
   );
 });
@@ -303,7 +303,7 @@ test('south-west corner join vertical', t => {
       }),
       1: createPane({
         id: 1,
-        childIds: [ 0, 2 ],
+        childIds: [ 2, 0 ],
         isGroup: true,
         direction: splitTypes.vertical,
         parentId: null,
@@ -326,7 +326,7 @@ test('south-west corner join vertical', t => {
   );
   t.is(
     end.panesById[2].joinDirection,
-    directions.down,
+    directions.left,
     'second pass should add a join down direction to sibling'
   );
 });
@@ -351,7 +351,7 @@ test('south-west corner join horizontal', t => {
       }),
       1: createPane({
         id: 1,
-        childIds: [ 0, 2 ],
+        childIds: [ 2, 0 ],
         isGroup: true,
         direction: splitTypes.horizontal,
         parentId: null,
@@ -374,7 +374,7 @@ test('south-west corner join horizontal', t => {
   );
   t.is(
     end.panesById[0].joinDirection,
-    directions.left,
+    directions.down,
     'second pass should add a join left direction to sibling'
   );
 });
@@ -422,7 +422,7 @@ test('south-east corner join vertical', t => {
   );
   t.is(
     end.panesById[2].joinDirection,
-    directions.down,
+    directions.right,
     'second pass should add a join down direction to sibling'
   );
 });
@@ -470,7 +470,7 @@ test('south-east corner join horizontal', t => {
   );
   t.is(
     end.panesById[2].joinDirection,
-    directions.right,
+    directions.down,
     'second pass should add a join right direction sibling'
   );
 });

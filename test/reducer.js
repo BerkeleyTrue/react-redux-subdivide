@@ -6,7 +6,6 @@ import reducer, {
   corners,
   createInitialState,
   createPane,
-  directions,
   splitTypes,
 
   cornerPressed,
@@ -43,7 +42,7 @@ test('state should not change for unrelated actions', t => {
 test('split right', (t) => {
   const endState = reducer(
     createInitialState(),
-    split(0, directions.right)
+    split.right(0)
   );
 
   const original = endState.panesById[0];
@@ -54,26 +53,13 @@ test('split right', (t) => {
   t.truthy(parent);
   t.truthy(added);
   t.deepEqual(parent.childIds, [ original.id, added.id ]);
-  t.is(parent.direction, splitTypes.horizontal);
+  t.is(parent.direction, splitTypes.vertical);
   t.is(original.parentId, parent.id);
   t.is(added.parentId, parent.id);
 });
 
 test('split left', (t) => {
-  const endState = reducer(createInitialState(), split(0, directions.left));
-  const original = endState.panesById[0];
-  const parent = endState.panesById[original.parentId];
-  const added = endState.panesById[parent.childIds[0]];
-
-  t.deepEqual(parent.childIds, [ added.id, original.id ]);
-  t.is(parent.direction, splitTypes.horizontal);
-});
-
-test('split above', (t) => {
-  const endState = reducer(
-    createInitialState(),
-    split(0, directions.up)
-  );
+  const endState = reducer(createInitialState(), split.left(0));
   const original = endState.panesById[0];
   const parent = endState.panesById[original.parentId];
   const added = endState.panesById[parent.childIds[0]];
@@ -82,10 +68,23 @@ test('split above', (t) => {
   t.is(parent.direction, splitTypes.vertical);
 });
 
+test('split above', (t) => {
+  const endState = reducer(
+    createInitialState(),
+    split.up(0)
+  );
+  const original = endState.panesById[0];
+  const parent = endState.panesById[original.parentId];
+  const added = endState.panesById[parent.childIds[0]];
+
+  t.deepEqual(parent.childIds, [ added.id, original.id ]);
+  t.is(parent.direction, splitTypes.horizontal);
+});
+
 test('split below', (t) => {
   const endState = reducer(
     createInitialState(),
-    split(0, directions.down)
+    split.down(0)
   );
   const original = endState.panesById[0];
   const parent = endState.panesById[original.parentId];
@@ -93,7 +92,7 @@ test('split below', (t) => {
     endState.panesById[parent.childIds[parent.childIds.length - 1]];
 
   t.deepEqual(parent.childIds, [ original.id, added.id ]);
-  t.is(parent.direction, splitTypes.vertical);
+  t.is(parent.direction, splitTypes.horizontal);
 });
 
 test('split non-root into two', t => {
@@ -113,7 +112,7 @@ test('split non-root into two', t => {
         id: 1,
         childIds: [ 0, 2, 3 ],
         isGroup: true,
-        direction: splitTypes.horizontal,
+        direction: splitTypes.vertical,
         parentId: null,
         splitRatio: 1
       }),
@@ -135,7 +134,7 @@ test('split non-root into two', t => {
       })
     }
   });
-  const endState = reducer(startState, split(3, directions.up));
+  const endState = reducer(startState, split.up(3));
   t.truthy(
     endState.panesById[3],
     'split pane should still exist'
@@ -172,7 +171,7 @@ test('split pane in same direction', t => {
         id: 1,
         childIds: [ 0, 2 ],
         isGroup: true,
-        direction: splitTypes.horizontal,
+        direction: splitTypes.vertical,
         parentId: null,
         splitRatio: 1
       }),
@@ -186,7 +185,7 @@ test('split pane in same direction', t => {
       })
     }
   });
-  const endState = reducer(startState, split(2, directions.left));
+  const endState = reducer(startState, split.left(2));
   t.truthy(
     endState.panesById[2],
     'split pane was removed'
@@ -211,7 +210,7 @@ test('split pane in same direction', t => {
 
 test('split horizontal ratio', t => {
   const startState = createInitialState();
-  const endState = reducer(startState, split(0, directions.right));
+  const endState = reducer(startState, split.right(0, 200, 200));
   const oldPane = endState.panesById[0];
   const newPane = endState.panesById[2];
   t.truthy(
@@ -547,43 +546,56 @@ test('join one of two in row below root', (t) => {
 test('divider moved', t => {
   const endState = reducer(
     createInitialState({
+      rootId: 1,
+      dividers: {
+        '2n0': {
+          id: '2n0',
+          beforePaneId: 2,
+          afterPaneId: 0
+        }
+      },
+      dividerDown: {
+        id: '2n0'
+      },
       panes: [ 0, 1, 3 ],
       panesById: {
         0: createPane({
           id: 0,
-          splitRatio: 0.3,
+          splitRatio: 0.5,
           parentId: 1
         }),
         1: createPane({
           id: 1,
           isGroup: 1,
-          childIds: [ 0, 1 ]
+          childIds: [ 2, 0 ],
+          direction: splitTypes.vertical,
+          height: 100,
+          width: 100
         }),
         2: createPane({
           id: 2,
-          splitRatio: 0.7,
+          splitRatio: 0.5,
           parentId: 1
         })
       }
     }),
-    dividerMoved(
-      0,
-      2,
-      0.2,
-      0.8
-    )
+    dividerMoved({ clientX: 25, clientY: 25 })
   );
 
+  const splitA = endState.panesById[0].splitRatio;
+  const splitB = endState.panesById[2].splitRatio;
   t.is(
-    endState.panesById[0].splitRatio,
-    0.2,
+    typeof splitA,
+    'number',
     'after pane split ratio did not update'
   );
   t.is(
-    endState.panesById[2].splitRatio,
-    0.8,
+    typeof splitB,
+    'number',
     'before pane split ratio did not update'
   );
+  t.snapshot(splitA);
+  t.snapshot(splitB);
 });
 
 test('update size on windows', t => {
