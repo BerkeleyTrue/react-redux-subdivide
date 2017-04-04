@@ -543,7 +543,7 @@ test('join one of two in row below root', (t) => {
   );
 });
 
-test('divider moved', t => {
+test('divider moved vertical', t => {
   const endState = reducer(
     createInitialState({
       rootId: 1,
@@ -596,6 +596,107 @@ test('divider moved', t => {
   );
   t.snapshot(splitA);
   t.snapshot(splitB);
+});
+
+test('divider moved horizontal', t => {
+  const endState = reducer(
+    createInitialState({
+      rootId: 1,
+      dividers: {
+        '2n0': {
+          id: '2n0',
+          beforePaneId: 2,
+          afterPaneId: 0
+        }
+      },
+      dividerDown: {
+        id: '2n0'
+      },
+      panes: [ 0, 1, 3 ],
+      panesById: {
+        0: createPane({
+          id: 0,
+          splitRatio: 0.5,
+          parentId: 1
+        }),
+        1: createPane({
+          id: 1,
+          isGroup: 1,
+          childIds: [ 2, 0 ],
+          direction: splitTypes.horizontal,
+          height: 100,
+          width: 100
+        }),
+        2: createPane({
+          id: 2,
+          splitRatio: 0.5,
+          parentId: 1
+        })
+      }
+    }),
+    dividerMoved({ clientX: 25, clientY: 25 })
+  );
+
+  const splitA = endState.panesById[0].splitRatio;
+  const splitB = endState.panesById[2].splitRatio;
+  t.is(
+    typeof splitA,
+    'number',
+    'after pane split ratio did not update'
+  );
+  t.is(
+    typeof splitB,
+    'number',
+    'before pane split ratio did not update'
+  );
+  t.snapshot(splitA);
+  t.snapshot(splitB);
+});
+
+test('divider moved does nothing below minimum move', t => {
+  const startState = createInitialState({
+    rootId: 1,
+    dividers: {
+      '2n0': {
+        id: '2n0',
+        beforePaneId: 2,
+        afterPaneId: 0
+      }
+    },
+    dividerDown: {
+      id: '2n0'
+    },
+    panes: [ 0, 1, 3 ],
+    panesById: {
+      0: createPane({
+        id: 0,
+        splitRatio: 0.5,
+        parentId: 1
+      }),
+      1: createPane({
+        id: 1,
+        isGroup: 1,
+        childIds: [ 2, 0 ],
+        direction: splitTypes.horizontal,
+        height: 100,
+        width: 100
+      }),
+      2: createPane({
+        id: 2,
+        splitRatio: 0.5,
+        parentId: 1
+      })
+    }
+  });
+  const endState = reducer(
+    startState,
+    dividerMoved({ clientX: 10, clientY: 10 })
+  );
+
+  t.is(
+    startState,
+    endState
+  );
 });
 
 test('update size on windows', t => {
