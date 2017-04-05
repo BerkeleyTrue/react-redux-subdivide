@@ -37,10 +37,10 @@ export const directions = {
 };
 
 export const types = createTypes([
-  'join',
   'split',
-
+  // join
   'mouseUpOnPane',
+
 
   'dividerPressed',
   'dividerMoved',
@@ -57,10 +57,6 @@ export const types = createTypes([
   'windowResize'
 ], ns);
 
-export const join = createAction(
-  types.join,
-  (retainId, removeId) => ({ retainId, removeId })
-);
 export const split = createAction(
   types.split,
   (splitType, id, clientX, clientY) => ({
@@ -198,7 +194,7 @@ export function hoveredCornerSelector(state) {
   return getNSState(state).cornerHover || {};
 }
 
-const _reducer = handleActions({
+export const _reducer = handleActions({
   // creates a new pane group, puts the existing and the newly created pane
   // as children of that group pane
   // so if we start with a 0 root pane and split it, we create a group
@@ -299,13 +295,21 @@ const _reducer = handleActions({
     };
   },
 
+  // join
   // check if pane is a group
   // check to make sure panes are next to each other
   // remove from parent
   // if parent only has one child
   //  - if parent is root, remove and make remaining child root
   //  - otherwise remove parent and attach child to grandparent
-  [types.join]: (state, { payload: { retainId, removeId } }) => {
+  [types.mouseUpOnPane]: (state, { payload: removeId }) => {
+    if (
+      !state.panesById[removeId] ||
+      !state.panesById[removeId].joinDirection
+    ) {
+      return state;
+    }
+    const { paneId: retainId } = state.cornerDown || {};
     const panesById = { ...state.panesById };
     const remove = panesById[removeId];
     const retain = { ...panesById[retainId] };

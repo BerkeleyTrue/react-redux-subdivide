@@ -16,7 +16,7 @@ import reducer, {
   dividerPressed,
   dividerReleased,
   dividerMoved,
-  join,
+  mouseUpOnPane,
   split,
   windowResize
 } from '../src/redux';
@@ -208,6 +208,44 @@ test('split pane in same direction', t => {
   );
 });
 
+test('join pane with no joinDirection should not change state', t => {
+  const startState = {
+    rootId: 1,
+    panes: [ 0, 1, 2 ],
+    panesById: {
+      0: createPane({
+        id: 0,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.33
+      }),
+      1: createPane({
+        id: 1,
+        childIds: [ 0, 2 ],
+        isGroup: true,
+        direction: splitTypes.horizontal,
+        parentId: null,
+        splitRatio: 1
+      }),
+      2: createPane({
+        id: 2,
+        childIds: [],
+        isGroup: false,
+        direction: null,
+        parentId: 1,
+        splitRatio: 0.33
+      })
+    }
+  };
+  const endState = reducer(startState, mouseUpOnPane(1));
+  t.is(
+    startState,
+    endState
+  );
+});
+
 test('split horizontal ratio', t => {
   const startState = createInitialState();
   const endState = reducer(startState, split.right(0, 200, 200));
@@ -236,9 +274,12 @@ test('split horizontal ratio', t => {
 });
 
 test('join pane into root should not change state', t => {
-  const startState = createInitialState({
+  const startState = {
     rootId: 1,
     panes: [ 0, 1, 2 ],
+    cornerDown: {
+      paneId: 0
+    },
     panesById: {
       0: createPane({
         id: 0,
@@ -253,6 +294,7 @@ test('join pane into root should not change state', t => {
         childIds: [ 0, 2 ],
         isGroup: true,
         direction: splitTypes.horizontal,
+        joinDirection: 'up',
         parentId: null,
         splitRatio: 1
       }),
@@ -265,8 +307,8 @@ test('join pane into root should not change state', t => {
         splitRatio: 0.33
       })
     }
-  });
-  const endState = reducer(startState, join(0, 1));
+  };
+  const endState = reducer(startState, mouseUpOnPane(1));
   t.is(
     startState,
     endState
@@ -274,8 +316,11 @@ test('join pane into root should not change state', t => {
 });
 
 test('join pane into group should not change state', t => {
-  const startState = createInitialState({
+  const startState = {
     rootId: 1,
+    cornerDown: {
+      paneId: 1
+    },
     panesById: {
       0: createPane({
         id: 0,
@@ -298,6 +343,7 @@ test('join pane into group should not change state', t => {
         childIds: [ 3, 4 ],
         isGroup: true,
         direction: null,
+        joinDirection: 'up',
         parentId: 1,
         splitRatio: 0.75
       }),
@@ -318,10 +364,10 @@ test('join pane into group should not change state', t => {
         splitRatio: 0.75
       })
     }
-  });
+  };
   const endState = reducer(
     startState,
-    join(3, 2)
+    mouseUpOnPane(2)
   );
   t.is(
     startState,
@@ -330,8 +376,11 @@ test('join pane into group should not change state', t => {
 });
 
 test('join non-adacent panes should not change state', t => {
-  const startState = createInitialState({
+  const startState = {
     rootId: 1,
+    cornerDown: {
+      paneId: 0
+    },
     panesById: {
       0: createPane({
         id: 0,
@@ -361,13 +410,14 @@ test('join non-adacent panes should not change state', t => {
         id: 3,
         childIds: [],
         isGroup: false,
+        joinDirection: 'up',
         direction: null,
         parentId: 1,
         splitRatio: 0.33
       })
     }
-  });
-  const endState = reducer(startState, join(0, 3));
+  };
+  const endState = reducer(startState, mouseUpOnPane(3));
 
   t.is(
     startState,
@@ -376,9 +426,13 @@ test('join non-adacent panes should not change state', t => {
   );
 });
 
-test('join one of two in row below root', (t) => {
+test('join one of two in pane below', (t) => {
   const startState = createInitialState({
     rootId: 1,
+    cornerDown: {
+      paneId: 2,
+      corner: corners.se
+    },
     panes: [ 0, 1, 2 ],
     panesById: {
       0: createPane({
@@ -391,7 +445,7 @@ test('join one of two in row below root', (t) => {
       }),
       1: createPane({
         id: 1,
-        childIds: [ 0, 2 ],
+        childIds: [ 2, 0 ],
         isGroup: true,
         direction: splitTypes.horizontal,
         parentId: null,
@@ -407,7 +461,7 @@ test('join one of two in row below root', (t) => {
       })
     }
   });
-  const endState = reducer(startState, join(2, 0));
+  const endState = reducer(startState, mouseUpOnPane(0));
 
   t.is(endState.rootId, 2);
   t.falsy(endState.panesById[1]);
@@ -418,9 +472,13 @@ test('join one of two in row below root', (t) => {
 });
 
 
-test('join one of three in row below root', (t) => {
+test('join one of three', (t) => {
   const startState = createInitialState({
     rootId: 1,
+    cornerDown: {
+      paneId: 2,
+      corner: corners.ne
+    },
     panesById: {
       0: createPane({
         id: 0,
@@ -457,8 +515,7 @@ test('join one of three in row below root', (t) => {
     }
   });
 
-  const action = join(2, 0);
-  const endState = reducer(startState, action);
+  const endState = reducer(startState, mouseUpOnPane(0));
 
   t.is(endState.rootId, 1);
   t.truthy(endState.panesById[1]);
@@ -468,9 +525,13 @@ test('join one of three in row below root', (t) => {
   t.is(endState.panesById[2].parentId, 1);
 });
 
-test('join one of two in row below root', (t) => {
+test('join one of two', (t) => {
   const startState = createInitialState({
     rootId: 1,
+    cornerDown: {
+      paneId: 3,
+      corner: corners.se
+    },
     panesById: {
       0: createPane({
         id: 0,
@@ -491,8 +552,8 @@ test('join one of two in row below root', (t) => {
       2: createPane({
         id: 2,
         childIds: [ 3, 4 ],
+        direction: splitTypes.horizontal,
         isGroup: true,
-        direction: null,
         parentId: 1,
         splitRatio: 0.75
       }),
@@ -515,8 +576,7 @@ test('join one of two in row below root', (t) => {
     }
   });
 
-  const action = join(3, 4);
-  const endState = reducer(startState, action);
+  const endState = reducer(startState, mouseUpOnPane(4));
 
   t.truthy(
     endState.panesById[3],

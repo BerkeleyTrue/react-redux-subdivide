@@ -18,7 +18,6 @@ import {
   cornerReleased,
   dividerMoved,
   dividerReleased,
-  join,
   split,
   windowResize,
 
@@ -123,16 +122,6 @@ export function windowResizeEpic(actions, { getState }, { window }) {
     ::takeUntil(actions::last(null, null, null));
 }
 
-export function paneJoinEpic(actions, { getState }) {
-  return actions.ofType(types.mouseUpOnPane)
-    ::map(({ payload }) => payload)
-    ::filter(paneId => pressedCornerSelector(getState()).id === paneId)
-    ::map(paneId => {
-      const { id: cornerDownId } = pressedCornerSelector(getState());
-      return join(cornerDownId, paneId);
-    });
-}
-
 export function releaseCornerEpic(actions, { getState }, { document }) {
   return actions.ofType(types.cornerPressed)
     ::switchMap(() => {
@@ -156,7 +145,6 @@ export function dividerEpic(actions) {
 export default combineEpics(
   dividerEpic,
   mouseMoveEpic,
-  paneJoinEpic,
   releaseCornerEpic,
   windowResizeEpic
 );
