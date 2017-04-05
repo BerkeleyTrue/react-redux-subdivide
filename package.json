@@ -20,7 +20,8 @@
     "cover:show": "open coverage/index.html",
     "cover:alls": "nyc report --reporter=text-lcov | coveralls",
     "cover:check": "nyc check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
-    "prepush": "npm run test && npm run cover:check"
+    "prepush": "npm run test && npm run cover:check",
+    "prepublishOnly": "npm run test && npm run build"
   },
   "repository": {
     "type": "git",
