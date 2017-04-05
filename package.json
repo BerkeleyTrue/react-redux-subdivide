@@ -1,6 +1,6 @@
 {
-  "name": "subdivide",
-  "description": "Split pane layout system for React. Each pane can be subdivided and any widget assigned to any pane allowing users define layout.",
+  "name": "react-redux-subdivide",
+  "description": "Split pane layout system for React and Redux. Each pane can be subdivided and any widget assigned to any pane.",
   "main": "lib/index.js",
   "scripts": {
     "clean": "rimraf lib",
@@ -22,18 +22,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/philholden/subdivide"
+    "url": "https://github.com/berkeleyTrue/react-redux-subdivide"
   },
   "keywords": [
-    "immutable",
-    "redux",
-    "split",
-    "panel",
-    "react",
     "layout",
+    "observable",
+    "pane",
+    "panel",
     "panes",
-    "blender",
-    "devtools"
+    "react",
+    "redux",
+    "rxjs",
+    "split",
+    "window"
   ],
   "ava": {
     "require": [
@@ -49,12 +50,11 @@
     "sourceMap": false,
     "instrument": false
   },
-  "author": "Phil Holden (http://github.com/philholden)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/philholden/subdivide/issues"
+    "url": "https://github.com/berkeleyTrue/react-redux-subdivide/issues"
   },
-  "homepage": "https://github.com/philholden/subdivide",
+  "homepage": "https://github.com/berkeleyTrue/react-redux-subdivide",
   "devDependencies": {
     "ava": "^0.18.2",
     "babel-cli": "^6.4.0",
@@ -97,7 +97,7 @@
     "nyc": "^10.1.2",
     "react": "^0.14.3",
     "react-docgen": "^2.6.1",
-    "react-dom": "^0.14.3",
+    "react-dom": "^15.4.2",
     "react-redux": "^3.0.1",
     "react-router": "^2.0.0-rc5",
     "redux": "^3.0.0",
@@ -124,7 +124,6 @@
   "dependencies": {
     "babel-runtime": "^6.23.0",
     "react": "^15.4.2",
-    "react-dom": "^15.4.2",
     "react-redux": "^5.0.3",
     "redux": "^3.6.0",
     "redux-actions": "^2.0.1",
