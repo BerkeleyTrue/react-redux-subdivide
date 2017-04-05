@@ -6,12 +6,12 @@ import { Provider } from 'react-redux';
 import { createEpicMiddleware } from 'redux-observable';
 
 import App from './pages/iframe.jsx';
-import { reducer as subdivide, rootEpic as subdivideEpic } from '../src';
+import { reducer as subdivideReducer, epic as subdivideEpic } from '../src';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
   combineReducers({
-    [subdivide]: subdivide
+    [subdivideReducer]: subdivideReducer
   }),
   composeEnhancers(
     applyMiddleware(

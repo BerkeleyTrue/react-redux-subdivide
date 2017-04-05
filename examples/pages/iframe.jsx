@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import Subdivide from '../../src';
+import { Subdivide } from '../../src';
 
 const styles = {
   menu: {

@@ -17,7 +17,7 @@ import {
 const mapStateToProps = createSelector(
   pressedDividerSelector,
   paneIdsSelector,
-  (pressedDivider, panes)=> ({
+  (pressedDivider, panes) => ({
     pressedDivider,
     panes
   })
@@ -36,7 +36,7 @@ const propTypes = {
   pressedDivider: PropTypes.object
 };
 
-export class Layout extends Component {
+export class Subdivide extends Component {
   componentDidMount() {
     this.props.layoutMounted();
   }
@@ -69,10 +69,10 @@ export class Layout extends Component {
   }
 }
 
-Layout.propTypes = propTypes;
-Layout.displayName = 'Layout';
+Subdivide.propTypes = propTypes;
+Subdivide.displayName = 'Subdivide';
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Layout);
+)(Subdivide);
