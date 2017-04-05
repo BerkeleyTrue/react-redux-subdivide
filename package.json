@@ -6,7 +6,7 @@
     "clean": "rimraf lib",
     "prebuild": "npm run clean",
     "build": "NODE_ENV=production babel src --out-dir lib",
-    "start": "webpack-dev-server --content-base examples --hot --config webpack.config.dev.js --port 3000",
+    "start": "webpack-dev-server --content-base examples --hot --port 3000",
     "lint": "eslint src",
     "commit": "git-cz",
     "test": "npm run test:ava",
