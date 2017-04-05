@@ -30,9 +30,6 @@ module.exports = {
           path.join(__dirname, 'src'),
           path.join(__dirname, 'examples')
         ]
-      },
-      {
-        test: /\.png$/, loader: 'url-loader?limit=100000'
       }
     ]
   }

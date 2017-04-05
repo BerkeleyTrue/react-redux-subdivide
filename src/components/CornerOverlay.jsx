@@ -15,8 +15,8 @@ const propTypes = {
   canSplit: PropTypes.bool,
   corner: PropTypes.string,
   height: PropTypes.number,
-  isDividerPressed: PropTypes.bool,
   isCornerPressed: PropTypes.bool,
+  isDividerPressed: PropTypes.bool,
   joinDirection: PropTypes.string,
   left: PropTypes.number,
   splitType: PropTypes.string,
@@ -232,13 +232,15 @@ export class CornerOverlay extends PureComponent {
           'row-resize';
       }
       return (
-        <div style={{
-          cursor,
-          height: '100%',
-          position: 'absolute',
-          top: 0,
-          width: '100%'
-        }}/>
+        <div
+          style={{
+            cursor,
+            height: '100%',
+            position: 'absolute',
+            top: 0,
+            width: '100%'
+          }}
+        />
       );
     }
     return (

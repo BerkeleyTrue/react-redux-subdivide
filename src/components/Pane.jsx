@@ -13,7 +13,6 @@ import {
 } from '../redux';
 
 const propTypes = {
-  paneId: PropTypes.number,
   DefaultComponent: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.string
@@ -23,6 +22,7 @@ const propTypes = {
   isGroup: PropTypes.bool,
   left: PropTypes.number,
   mouseUpOnPane: PropTypes.func,
+  paneId: PropTypes.number,
   top: PropTypes.number,
   width: PropTypes.number
 };

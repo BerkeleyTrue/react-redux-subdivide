@@ -12,8 +12,8 @@ import {
 
 const propTypes = {
   direction: PropTypes.string,
-  dividerPressed: PropTypes.func,
   dividerId: PropTypes.string,
+  dividerPressed: PropTypes.func,
   height: PropTypes.number,
   left: PropTypes.number,
   top: PropTypes.number,
