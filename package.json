@@ -2,6 +2,7 @@
   "name": "react-redux-subdivide",
   "description": "Split pane layout system for React and Redux. Each pane can be subdivided and any widget assigned to any pane.",
   "main": "lib/index.js",
+  "version": "0.0.1",
   "scripts": {
     "clean": "rimraf lib",
     "prebuild": "npm run clean",
@@ -19,7 +20,6 @@
     "cover:show": "open coverage/index.html",
     "cover:alls": "nyc report --reporter=text-lcov | coveralls",
     "cover:check": "nyc check-coverage --statements 0 --branches 0 --functions 0 --lines 0",
-    "release": "semantic-release pre && npm publish && semantic-release post",
     "prepush": "npm run test && npm run cover:check"
   },
   "repository": {
@@ -87,7 +87,6 @@
     "react-redux": "^3.0.1",
     "redux": "^3.0.0",
     "rimraf": "^2.4.3",
-    "semantic-release": "^6.3.2",
     "webpack": "^2.3.2",
     "webpack-dev-server": "^2.4.2"
   },
