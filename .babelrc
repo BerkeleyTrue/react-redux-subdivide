@@ -5,8 +5,8 @@
     "stage-1"
   ],
   "plugins": [
-    "transform-decorators-legacy",
-    "transform-function-bind"
+    "transform-function-bind",
+    "transform-runtime"
   ],
   "env": {
     "development": {
@@ -16,7 +16,6 @@
     },
     "test": {
       "plugins": [
-        "transform-decorators-legacy",
         "istanbul"
       ]
     }
