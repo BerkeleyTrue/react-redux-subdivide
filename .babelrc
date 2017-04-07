@@ -6,7 +6,8 @@
   ],
   "plugins": [
     "transform-function-bind",
-    "transform-runtime"
+    "transform-runtime",
+    "jsx-strip-ext"
   ],
   "env": {
     "development": {
