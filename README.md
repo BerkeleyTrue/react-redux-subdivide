@@ -1,5 +1,7 @@
 # Subdivide Layout
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/BerkeleyTrue/react-redux-subdivide.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://travis-ci.org/BerkeleyTrue/react-redux-subdivide.svg?branch=master)](https://travis-ci.org/BerkeleyTrue/react-redux-subdivide)
 [![Coverage Status](https://coveralls.io/repos/github/BerkeleyTrue/react-redux-subdivide/badge.svg?branch=master)](https://coveralls.io/github/BerkeleyTrue/react-redux-subdivide?branch=master)
 [![version](https://img.shields.io/npm/v/react-redux-subdivide.svg?style=flat-square)](http://npm.im/react-redux-subdivide)
