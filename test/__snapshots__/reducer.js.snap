@@ -1,3 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
 exports[`divider moved 1`] = `"0.96875"`;
 
 exports[`divider moved 2`] = `"0.03125"`;
@@ -6,10 +8,10 @@ exports[`divider moved does nothing below minimum move 1`] = `"0.5"`;
 
 exports[`divider moved does nothing below minimum move 2`] = `"0.5"`;
 
-exports[`divider moved horizontal 1`] = `"0.9583333333333334"`;
+exports[`divider moved horizontal 1`] = `0.9583333333333334`;
 
-exports[`divider moved horizontal 2`] = `"0.041666666666666664"`;
+exports[`divider moved horizontal 2`] = `0.041666666666666664`;
 
-exports[`divider moved vertical 1`] = `"0.96875"`;
+exports[`divider moved vertical 1`] = `0.96875`;
 
-exports[`divider moved vertical 2`] = `"0.03125"`;
+exports[`divider moved vertical 2`] = `0.03125`;
