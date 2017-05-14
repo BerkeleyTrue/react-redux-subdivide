@@ -6,10 +6,14 @@
   ],
   "plugins": [
     "transform-function-bind",
-    "transform-runtime",
-    "jsx-strip-ext"
+    "transform-runtime"
   ],
   "env": {
+    "production": {
+      "plugins": [
+        "jsx-strip-ext"
+      ]
+    },
     "development": {
       "presets": [
         "react-hmre"
