@@ -85,7 +85,7 @@
     "eslint-plugin-react": "^7.0.1",
     "husky": "^0.13.3",
     "nodemon": "^1.11.0",
-    "nyc": "^10.1.2",
+    "nyc": "^11.0.0",
     "react": "^15.5.4",
     "react-dom": "^15.4.2",
     "react-redux": "^5.0.4",
