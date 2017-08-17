@@ -109,7 +109,7 @@
     "redux": "^3.6.0",
     "redux-actions": "^2.0.1",
     "redux-create-types": "0.0.1",
-    "redux-observable": "^0.14.1",
+    "redux-observable": "^0.16.0",
     "reselect": "^3.0.0",
     "rxjs": "^5.2.0"
   }
